@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Cartão Fidelidade — Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .stamp-circle {
+        width: 45px;
+        height: 45px;
+        border: 3px solid #6366f1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
+      }
+      .stamp-circle.stamped {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-color: #047857;
+        color: #fff;
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+      }
+      .stamp-circle:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+      }
+      .cartela {
+        background: linear-gradient(135deg, #fff 0%, #f8fafc 50%, #e2e8f0 100%);
+        border: 3px solid #3b82f6;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15),
+          0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: 0.3s;
+      }
+      .cartela:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2),
+          0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen"
+  >
+    <!-- Header -->
+    <header
+      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white p-6 shadow-2xl"
+    >
+      <div class="container mx-auto flex justify-between items-center">
+        <h1
+          class="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
+        >
+          💳 Sistema de Cartão Fidelidade ✨
+        </h1>
+        <div class="flex gap-4 items-center">
+          <a
+            href="index.html"
+            class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >🏠 Início</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Login Cliente -->
+    <div
+      id="userLoginModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-8 rounded-xl shadow-2xl w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+          👤 Login Cliente
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Usuário:</label
+            >
+            <input
+              type="text"
+              id="userLoginUser"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="cliente"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Senha:</label
+            >
+            <input
+              type="password"
+              id="userLoginPass"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="123456"
+            />
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="userLoginBtn2"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium"
+            >
+              Entrar
+            </button>
+            <a
+              href="index.html"
+              class="flex-1 text-center bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium"
+              >Cancelar</a
+            >
+          </div>
+        </div>
+        <div class="mt-4 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+          <strong>Cliente Demo:</strong> usuário: <code>cliente</code> | senha:
+          <code>123456</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- View -->
+    <div id="viewMode" class="container mx-auto p-6 hidden">
+      <div
+        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
+      >
+        <div class="text-center">
+          <div class="text-5xl mb-4">🍔🎉</div>
+          <h2 class="text-4xl font-bold mb-4 animate-pulse">
+            PRÊMIO ESPECIAL!
+          </h2>
+          <div class="bg-white bg-opacity-20 rounded-xl p-6 backdrop-blur-sm">
+            <p class="text-2xl font-semibold mb-2">
+              Complete seu Cartão Fidelidade
+            </p>
+            <p class="text-xl mb-4">
+              Colete
+              <span
+                class="bg-yellow-400 text-black px-3 py-1 rounded-full font-bold"
+                >10 PONTOS</span
+              >
+              e ganhe:
+            </p>
+            <div
+              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-4 rounded-2xl text-3xl font-black shadow-lg"
+            >
+              💰 R$ 50 VOUCHER IFOOD 💰
+            </div>
+            <p class="text-lg mt-4 opacity-90">
+              🚀 Válido em qualquer restaurante do iFood!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-100 border-2 border-orange-400 rounded-2xl p-6 mb-8 shadow-lg"
+      >
+        <div class="text-center">
+          <h3 class="text-2xl font-bold text-orange-800 mb-4">
+            ⚠ REGRAS IMPORTANTES ⚠
+          </h3>
+          <div class="bg-white bg-opacity-70 rounded-xl p-4 backdrop-blur-sm">
+            <div class="text-lg font-semibold text-red-700 mb-2">
+              🔢 Cada código vale apenas
+              <span class="bg-red-200 px-2 py-1 rounded font-bold"
+                >1 PONTO</span
+              >
+            </div>
+            <div class="text-lg font-semibold text-orange-700">
+              🏆 Quem completar
+              <span class="bg-yellow-300 px-2 py-1 rounded font-bold"
+                >10 PONTOS</span
+              >
+              primeiro,
+            </div>
+            <div class="text-lg font-bold text-red-800 mt-2">
+              🔄
+              <span class="bg-red-300 px-3 py-1 rounded"
+                >ZERARÁ TODOS OS CARTÕES</span
+              >
+            </div>
+            <div class="text-base text-gray-700 mt-3">
+              ✨ Uma nova rodada começará automaticamente!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-white rounded-2xl p-6 mb-8 shadow-lg border-2 border-blue-200"
+      >
+        <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">
+          🔍 Buscar Cartão
+        </h3>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Digite o nome ou telefone do cliente..."
+              class="w-full p-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+              oninput="filterCartelas()"
+            />
+          </div>
+          <button
+            onclick="clearSearch()"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl font-semibold"
+          >
+            🗑 Limpar
+          </button>
+        </div>
+        <div
+          id="searchResults"
+          class="mt-4 text-center text-gray-600 hidden"
+        ></div>
+      </div>
+
+      <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+        💳 Cartões Fidelidade
+      </h2>
+      <div
+        id="cartelasGrid"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      ></div>
+    </div>
+
+    <!-- Firebase / App -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        getDoc,
+        getDocs,
+        onSnapshot,
+        updateDoc,
+        writeBatch,
+        setDoc,
+        serverTimestamp,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB7UcJxEJHffsvCI_Y9Uylwy943RxBSIEA",
+        authDomain: "banco-e3302.firebaseapp.com",
+        projectId: "banco-e3302",
+        storageBucket: "banco-e3302.firebasestorage.app",
+        messagingSenderId: "669890747472",
+        appId: "1:669890747472:web:b3188add68fffb010f0555",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      let allCartelas = [];
+      let allCodes = [];
+
+      const userLoginModal = document.getElementById("userLoginModal");
+      const viewMode = document.getElementById("viewMode");
+      const cartelasGrid = document.getElementById("cartelasGrid");
+
+      const cartelasColRef = collection(db, "cartelas");
+      const codesColRef = collection(db, "codes");
+      const winnersColRef = collection(db, "winners");
+
+      /* Login Cliente (fixo) */
+      function handleUserLogin() {
+        const user = document.getElementById("userLoginUser").value.trim();
+        const pass = document.getElementById("userLoginPass").value.trim();
+        if (user === "cliente" && pass === "123456") {
+          userLoginModal.classList.add("hidden");
+          viewMode.classList.remove("hidden");
+        } else {
+          alert(
+            "❌ Credenciais inválidas. Use usuário: cliente | senha: 123456"
+          );
+        }
+      }
+      document
+        .getElementById("userLoginBtn2")
+        .addEventListener("click", handleUserLogin);
+
+      /* Utils */
+      const hidePhone = (p) => p.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-*");
+      const pw = (stamped, stamps) =>
+        Math.round(((stamped?.length || 0) / stamps) * 100);
+      const nextEmptyStamp = (stamped, stamps) => {
+        for (let i = 1; i <= stamps; i++)
+          if (!(stamped || []).includes(i)) return i;
+        return null;
+      };
+      const fmtDate = (ts) =>
+        ts?.toDate ? ts.toDate().toLocaleString("pt-BR") : "";
+
+      /* Render */
+      function createCartelaHTML(cartela) {
+        const stampsButtons = [];
+        for (let i = 1; i <= cartela.stamps; i++) {
+          const stamped = (cartela.stamped || []).includes(i);
+          stampsButtons.push(
+            `<div class="stamp-circle ${stamped ? "stamped" : ""}">${
+              stamped ? "✓" : i
+            }</div>`
+          );
+        }
+        const progress = pw(cartela.stamped, cartela.stamps);
+        const winnerBlock =
+          cartela.winner && cartela.winner.delivered === false
+            ? `
+          <div class="mt-4 p-4 bg-gradient-to-r from-green-100 to-yellow-100 border-2 border-green-400 rounded-lg text-center">
+            <div class="text-green-800 font-bold text-lg mb-1">🎉 CARTÃO GANHADOR! 🎉</div>
+            <div class="text-orange-700 font-medium">Ganhou em: ${fmtDate(
+              cartela.winner.at
+            )}</div>
+            <div class="text-sm text-gray-600 mt-1">Aguardando entrega do prêmio.</div>
+          </div>`
+            : "";
+
+        return `
+          <div class="cartela p-6 ${
+            !cartela.active ? "opacity-60 border-red-300" : ""
+          }">
+            <div class="text-center mb-4">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <div class="text-xl font-bold text-gray-800">👤 ${
+                  cartela.name
+                }</div>
+                ${
+                  !cartela.active
+                    ? `<span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">Inativo</span>`
+                    : ""
+                }
+              </div>
+              <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${hidePhone(
+                cartela.phone
+              )}</div>
+              <div class="text-sm text-gray-600">Pontos: ${
+                (cartela.stamped || []).length
+              }/${cartela.stamps} (${progress}%)</div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width:${progress}%"></div></div>
+            </div>
+
+            <div class="grid grid-cols-5 gap-3 justify-items-center">${stampsButtons.join(
+              ""
+            )}</div>
+
+            ${winnerBlock}
+
+            ${
+              !cartela.active
+                ? `
+              <div class="mt-4 p-4 bg-red-100 border-2 border-red-400 rounded-lg text-center">
+                <div class="text-red-800 font-bold text-lg mb-2">⚠ CARTÃO INATIVO ⚠</div>
+                <div class="text-red-600 font-semibold">Este cartão está temporariamente desabilitado</div>
+              </div>`
+                : (cartela.stamped || []).length === cartela.stamps
+                ? `
+              <div class="mt-4 p-4 bg-gradient-to-r from-green-100 to-yellow-100 border-2 border-green-400 rounded-lg text-center">
+                <div class="text-green-800 font-bold text-lg mb-2">🎉 CARTÃO COMPLETO! 🎉</div>
+                <div class="text-orange-600 font-semibold">🍔 PRÊMIO: R$ 50 iFood Voucher</div>
+              </div>`
+                : `
+              <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="text-blue-700 font-medium text-center mb-3">🔢 Insira o código para acumular pontos</div>
+                <div class="flex gap-2">
+                  <input type="text" id="code-${cartela.id}" placeholder="Digite o código" class="flex-1 p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                  <button onclick="window.submitCode('${cartela.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Validar</button>
+                </div>
+              </div>`
+            }
+          </div>`;
+      }
+
+      function renderCartelas(cartelas) {
+        const term = (document.getElementById("searchInput")?.value || "")
+          .toLowerCase()
+          .trim();
+        const searchResults = document.getElementById("searchResults");
+        const active = cartelas.filter((c) => c.active);
+        const src = term
+          ? active.filter(
+              (c) =>
+                c.name.toLowerCase().includes(term) || c.phone.includes(term)
+            )
+          : active;
+        cartelasGrid.innerHTML = src.map((c) => createCartelaHTML(c)).join("");
+        if (!term) searchResults?.classList.add("hidden");
+        else {
+          searchResults?.classList.remove("hidden");
+          searchResults.innerHTML = src.length
+            ? `<p class="text-green-600 font-semibold">${src.length} cartão(s) encontrado(s)</p>`
+            : `<p class="text-red-600 font-semibold">Nenhum cartão encontrado para "${term}"</p>`;
+        }
+      }
+
+      /* Listeners */
+      onSnapshot(cartelasColRef, (snap) => {
+        allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderCartelas(allCartelas);
+      });
+      onSnapshot(codesColRef, (snap) => {
+        allCodes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      });
+
+      /* Pontos / Código */
+      async function submitCode(cartelaId) {
+        const input = document.getElementById(`code-${cartelaId}`);
+        const code = (input?.value || "").trim().toUpperCase();
+        if (!code) return alert("❌ Digite um código!");
+        const cartela = allCartelas.find((c) => c.id === cartelaId);
+        if (!cartela) return;
+
+        if (!cartela.active) {
+          input.value = "";
+          return alert("❌ Este cartão está inativo!");
+        }
+        if ((cartela.stamped?.length || 0) >= cartela.stamps) {
+          input.value = "";
+          return alert("⚠ Cartão já está completo!");
+        }
+
+        const codeRef = doc(db, "codes", code);
+        const codeSnap = await getDoc(codeRef);
+        if (!codeSnap.exists() || !codeSnap.data().active) {
+          input.value = "";
+          return alert("❌ Código inválido ou inativo!");
+        }
+
+        const usedRef = doc(db, "cartelas", cartelaId, "usedCodes", code);
+        if ((await getDoc(usedRef)).exists()) {
+          input.value = "";
+          return alert("❌ Este código já foi usado neste cartão!");
+        }
+
+        const next = nextEmptyStamp(cartela.stamped, cartela.stamps);
+        if (!next) {
+          input.value = "";
+          return alert("⚠ Não há pontos disponíveis.");
+        }
+
+        await updateDoc(doc(db, "cartelas", cartelaId), {
+          stamped: [...(cartela.stamped || []), next].sort((a, b) => a - b),
+        });
+        await setDoc(usedRef, { usedAt: serverTimestamp() });
+        input.value = "";
+
+        const updated = (cartela.stamped?.length || 0) + 1;
+        if (updated === cartela.stamps) {
+          // registra ganhador, marca flag e inicia nova rodada
+          const wRef = await addDoc(winnersColRef, {
+            name: cartela.name,
+            phone: cartela.phone,
+            cartelaId: cartela.id,
+            createdAt: serverTimestamp(),
+            delivered: false,
+          });
+          await updateDoc(doc(db, "cartelas", cartelaId), {
+            winner: {
+              at: serverTimestamp(),
+              delivered: false,
+              winnerDocId: wRef.id,
+            },
+          });
+
+          await resetAllCardsAndUsedCodes();
+          alert(
+            `🎉 PARABÉNS ${cartela.name}! Você completou 10 pontos! Nova rodada iniciada.`
+          );
+        } else {
+          alert("✅ Código válido! 1 ponto adicionado!");
+        }
+      }
+
+      async function resetAllCardsAndUsedCodes() {
+        const batchSize = 400;
+        for (let i = 0; i < allCartelas.length; i += batchSize) {
+          const slice = allCartelas.slice(i, i + batchSize);
+          const batch = writeBatch(db);
+          slice.forEach((c) =>
+            batch.update(doc(db, "cartelas", c.id), { stamped: [] })
+          );
+          await batch.commit();
+        }
+        for (const c of allCartelas) {
+          const usedRef = collection(db, "cartelas", c.id, "usedCodes");
+          const usedSnap = await getDocs(usedRef);
+          const batch = writeBatch(db);
+          usedSnap.forEach((d) =>
+            batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
+          );
+          await batch.commit();
+        }
+      }
+
+      /* Busca */
+      function filterCartelas() {
+        renderCartelas(allCartelas);
+      }
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        renderCartelas(allCartelas);
+        document.getElementById("searchResults").classList.add("hidden");
+      }
+
+      window.submitCode = submitCode;
+      window.filterCartelas = filterCartelas;
+      window.clearSearch = clearSearch;
+    </script>
+  </body>
+</html>
