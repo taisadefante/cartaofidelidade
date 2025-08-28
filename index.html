@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Cartão Fidelidade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .stamp-circle {
+        width: 45px;
+        height: 45px;
+        border: 3px solid #6366f1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
+      }
+      .stamp-circle.stamped {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-color: #047857;
+        color: white;
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+      }
+      .stamp-circle:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+      }
+      .cartela {
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f8fafc 50%,
+          #e2e8f0 100%
+        );
+        border: 3px solid #3b82f6;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15),
+          0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+      }
+      .cartela:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2),
+          0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      .admin-panel {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen"
+  >
+    <!-- Header -->
+    <header
+      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white p-6 shadow-2xl"
+    >
+      <div class="container mx-auto flex justify-between items-center">
+        <h1
+          class="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
+        >
+          💳 Sistema de Cartão Fidelidade ✨
+        </h1>
+        <div class="flex gap-4 items-center">
+          <span
+            id="adminBadge"
+            class="hidden text-sm bg-white/10 px-3 py-1 rounded-full"
+          ></span>
+          <button
+            id="userLoginBtn"
+            class="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+          >
+            👤 Login Cliente
+          </button>
+          <button
+            id="viewModeBtn"
+            class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hidden"
+          >
+            👁 Visualização
+          </button>
+          <button
+            id="adminModeBtn"
+            class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+          >
+            🔐 Admin
+          </button>
+          <button
+            id="logoutBtn"
+            class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hidden"
+          >
+            🚪 Sair
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- User Login Modal -->
+    <div
+      id="userLoginModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white p-8 rounded-xl shadow-2xl w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+          👤 Login Cliente
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Usuário:</label
+            >
+            <input
+              type="text"
+              id="userLoginUser"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="cliente"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Senha:</label
+            >
+            <input
+              type="password"
+              id="userLoginPass"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="123456"
+            />
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="userLoginBtn2"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors"
+            >
+              Entrar
+            </button>
+            <button
+              id="cancelUserLoginBtn"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+        <div class="mt-4 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+          <strong>Cliente Demo:</strong> usuário: <code>cliente</code> | senha:
+          <code>123456</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Login Modal (Firebase Auth) -->
+    <div
+      id="adminLoginModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white p-8 rounded-xl shadow-2xl w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+          🔐 Login Administrador
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >E-mail:</label
+            >
+            <input
+              type="email"
+              id="adminEmail"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="admin@exemplo.com"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Senha:</label
+            >
+            <input
+              type="password"
+              id="adminPass"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="••••••"
+            />
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="adminLoginBtn2"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors"
+            >
+              Entrar
+            </button>
+            <button
+              id="cancelAdminLoginBtn"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+        <div class="mt-4 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
+          <strong>Dica:</strong> no Firebase Console ative
+          <em>Email/Password</em> e crie o usuário admin.
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome Screen (COMPLETA) -->
+    <div id="welcomeScreen" class="container mx-auto p-6">
+      <!-- Hero Banner Section -->
+      <div
+        class="bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 rounded-2xl p-8 mb-8 text-white shadow-2xl relative overflow-hidden"
+      >
+        <div class="relative z-10 text-center">
+          <div class="text-8xl mb-6 animate-bounce">🎉🍔</div>
+          <h2
+            class="text-5xl font-black mb-6 bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent animate-pulse"
+          >
+            PROGRAMA DE FIDELIDADE EXCLUSIVO!
+          </h2>
+          <div
+            class="bg-white bg-opacity-20 rounded-2xl p-8 backdrop-blur-sm mb-6"
+          >
+            <div class="text-3xl font-bold mb-4 text-yellow-300">
+              ✨ TROQUE CÓDIGOS POR PONTOS ✨
+            </div>
+            <div class="text-xl text-blue-100 mb-6">
+              Participe do nosso programa exclusivo e ganhe prêmios incríveis!
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div
+                class="bg-gradient-to-b from-green-400 to-emerald-500 text-black p-4 rounded-xl"
+              >
+                <div class="text-3xl mb-2">🔢</div>
+                <div class="font-bold">DIGITE CÓDIGOS</div>
+              </div>
+              <div
+                class="bg-gradient-to-b from-yellow-400 to-orange-500 text-black p-4 rounded-xl"
+              >
+                <div class="text-3xl mb-2">⭐</div>
+                <div class="font-bold">ACUMULE PONTOS</div>
+              </div>
+              <div
+                class="bg-gradient-to-b from-purple-400 to-pink-500 text-black p-4 rounded-xl"
+              >
+                <div class="text-3xl mb-2">🎁</div>
+                <div class="font-bold">GANHE PRÊMIOS</div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-6 text-center"
+          >
+            <div class="text-2xl font-bold mb-2">🚀 COMECE AGORA MESMO!</div>
+            <div class="text-lg">
+              Faça login e comece a colecionar seus pontos!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Program Info Section -->
+      <div
+        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
+      >
+        <div class="text-center">
+          <div class="text-6xl mb-6 animate-bounce">🎯🏆</div>
+          <h2 class="text-5xl font-black mb-6 animate-pulse">
+            TROQUE CÓDIGOS POR PONTOS!
+          </h2>
+          <div class="bg-white bg-opacity-20 rounded-xl p-8 backdrop-blur-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div
+                class="bg-gradient-to-b from-yellow-400 to-orange-500 text-black p-6 rounded-2xl shadow-lg"
+              >
+                <div class="text-4xl mb-3">🔢</div>
+                <h3 class="text-xl font-bold mb-2">DIGITE CÓDIGOS</h3>
+                <p class="text-sm">
+                  Insira códigos especiais e ganhe pontos instantaneamente!
+                </p>
+              </div>
+              <div
+                class="bg-gradient-to-b from-green-400 to-emerald-500 text-black p-6 rounded-2xl shadow-lg"
+              >
+                <div class="text-4xl mb-3">⭐</div>
+                <h3 class="text-xl font-bold mb-2">ACUMULE PONTOS</h3>
+                <p class="text-sm">
+                  Cada código vale 1 ponto. Colete 10 pontos para concorrer!
+                </p>
+              </div>
+              <div
+                class="bg-gradient-to-b from-purple-400 to-pink-500 text-black p-6 rounded-2xl shadow-lg"
+              >
+                <div class="text-4xl mb-3">🎁</div>
+                <h3 class="text-xl font-bold mb-2">GANHE PRÊMIOS</h3>
+                <p class="text-sm">
+                  Complete 10 pontos e ganhe R$ 50 no iFood!
+                </p>
+              </div>
+            </div>
+            <div
+              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-6 rounded-2xl text-4xl font-black shadow-lg mb-6"
+            >
+              💰 PRÊMIO: R$ 50 VOUCHER IFOOD 💰
+            </div>
+            <div class="bg-red-600 bg-opacity-80 rounded-xl p-4 mb-4">
+              <h3 class="text-2xl font-bold mb-2">⚡ REGRA ESPECIAL ⚡</h3>
+              <p class="text-lg">
+                Quando alguém completar 10 pontos primeiro, TODOS os cartões são
+                zerados e uma nova rodada começa!
+              </p>
+            </div>
+            <p class="text-2xl font-semibold">
+              🚀 Faça login e comece a concorrer agora!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center">
+        <div
+          class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 shadow-2xl"
+        >
+          <h3 class="text-3xl font-bold text-white mb-4">
+            🎮 PRONTO PARA COMEÇAR?
+          </h3>
+          <p class="text-xl text-blue-100 mb-6">
+            Faça login e comece a colecionar pontos agora mesmo!
+          </p>
+          <div class="flex justify-center gap-4">
+            <button
+              onclick="document.getElementById('userLoginBtn').click()"
+              class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              👤 ENTRAR COMO CLIENTE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Mode -->
+    <div id="viewMode" class="container mx-auto p-6 hidden">
+      <!-- Banner -->
+      <div
+        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
+      >
+        <div class="text-center">
+          <div class="text-5xl mb-4">🍔🎉</div>
+          <h2 class="text-4xl font-bold mb-4 animate-pulse">
+            PRÊMIO ESPECIAL!
+          </h2>
+          <div class="bg-white bg-opacity-20 rounded-xl p-6 backdrop-blur-sm">
+            <p class="text-2xl font-semibold mb-2">
+              Complete seu Cartão Fidelidade
+            </p>
+            <p class="text-xl mb-4">
+              Colete
+              <span
+                class="bg-yellow-400 text-black px-3 py-1 rounded-full font-bold"
+                >10 PONTOS</span
+              >
+              e ganhe:
+            </p>
+            <div
+              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-4 rounded-2xl text-3xl font-black shadow-lg"
+            >
+              💰 R$ 50 VOUCHER IFOOD 💰
+            </div>
+            <p class="text-lg mt-4 opacity-90">
+              🚀 Válido em qualquer restaurante do iFood!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regras -->
+      <div
+        class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-100 border-2 border-orange-400 rounded-2xl p-6 mb-8 shadow-lg"
+      >
+        <div class="text-center">
+          <h3 class="text-2xl font-bold text-orange-800 mb-4">
+            ⚠ REGRAS IMPORTANTES ⚠
+          </h3>
+          <div class="bg-white bg-opacity-70 rounded-xl p-4 backdrop-blur-sm">
+            <div class="text-lg font-semibold text-red-700 mb-2">
+              🔢 Cada código vale apenas
+              <span class="bg-red-200 px-2 py-1 rounded font-bold"
+                >1 PONTO</span
+              >
+            </div>
+            <div class="text-lg font-semibold text-orange-700">
+              🏆 Quem completar
+              <span class="bg-yellow-300 px-2 py-1 rounded font-bold"
+                >10 PONTOS</span
+              >
+              primeiro,
+            </div>
+            <div class="text-lg font-bold text-red-800 mt-2">
+              🔄
+              <span class="bg-red-300 px-3 py-1 rounded"
+                >ZERARÁ TODOS OS CARTÕES</span
+              >
+            </div>
+            <div class="text-base text-gray-700 mt-3">
+              ✨ Uma nova rodada começará automaticamente!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Busca -->
+      <div
+        class="bg-white rounded-2xl p-6 mb-8 shadow-lg border-2 border-blue-200"
+      >
+        <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">
+          🔍 Buscar Cartão
+        </h3>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Digite o nome ou telefone do cliente..."
+              class="w-full p-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+              oninput="filterCartelas()"
+            />
+          </div>
+          <button
+            onclick="clearSearch()"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl font-semibold transition-colors"
+          >
+            🗑 Limpar
+          </button>
+        </div>
+        <div
+          id="searchResults"
+          class="mt-4 text-center text-gray-600 hidden"
+        ></div>
+      </div>
+
+      <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+        💳 Cartões Fidelidade
+      </h2>
+      <div
+        id="cartelasGrid"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      ></div>
+    </div>
+
+    <!-- Admin Mode -->
+    <div id="adminMode" class="hidden">
+      <div class="admin-panel text-white p-6">
+        <div class="container mx-auto">
+          <h2 class="text-3xl font-bold mb-6">⚙ Painel Administrativo</h2>
+
+          <!-- Novo Cartão -->
+          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
+            <h3 class="text-xl font-bold mb-4">➕ Novo Cartão Fidelidade</h3>
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+              <input
+                type="text"
+                id="newName"
+                placeholder="Nome do cliente"
+                class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                id="newPhone"
+                placeholder="Telefone (ex: 11999887766)"
+                class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="number"
+                id="newStamps"
+                placeholder="Quantidade de pontos"
+                value="10"
+                min="10"
+                max="10"
+                class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                readonly
+              />
+              <button
+                id="addCartelaBtn"
+                class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
+              >
+                ➕ Criar
+              </button>
+              <button
+                id="blockAllCardsBtn"
+                class="bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
+              >
+                🔒 Bloquear Todos
+              </button>
+              <button
+                id="deleteAllCardsBtn"
+                class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
+              >
+                🗑 Excluir Todos
+              </button>
+            </div>
+          </div>
+
+          <!-- Configurações do Sistema (informativo) -->
+          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
+            <h3 class="text-xl font-bold mb-4">⚙ Configurações do Sistema</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <h4 class="font-semibold text-gray-700">
+                  🔐 Senha do Administrador
+                </h4>
+                <div class="p-3 rounded-lg bg-gray-50 border">
+                  <p class="text-sm text-gray-700">
+                    O login do administrador é feito via
+                    <strong>Firebase Authentication (Email/Password)</strong>.
+                    Gerencie usuários e senhas no
+                    <em>Firebase Console › Authentication</em>.
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <h4 class="font-semibold text-gray-700">👤 Senha do Cliente</h4>
+                <div class="p-3 rounded-lg bg-gray-50 border">
+                  <p class="text-sm text-gray-700">
+                    O acesso do cliente é fixo: <code>cliente</code> /
+                    <code>123456</code>. (Uso apenas para visualização e
+                    validação de códigos.)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gerenciar Códigos -->
+          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
+            <h3 class="text-xl font-bold mb-4">🔑 Gerenciar Códigos</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <input
+                type="text"
+                id="newCode"
+                placeholder="Novo código (ex: ABC123)"
+                class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="number"
+                id="codePoints"
+                placeholder="Pontos do código"
+                value="1"
+                min="1"
+                max="1"
+                class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                readonly
+              />
+              <button
+                id="addCodeBtn"
+                class="bg-purple-600 hover:bg-purple-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
+              >
+                Criar Código
+              </button>
+            </div>
+            <div
+              class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4"
+            >
+              <h4 class="font-semibold text-yellow-800 mb-2">
+                ⚠ Regra Importante:
+              </h4>
+              <p class="text-sm text-yellow-700">
+                Cada código vale apenas <strong>1 ponto</strong>. Ao completar
+                10 pontos,
+                <strong>todos os cartões são zerados automaticamente</strong> e
+                inicia uma nova rodada.
+              </p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold mb-2">📝 Códigos Ativos:</h4>
+              <div id="activeCodesList" class="space-y-2"></div>
+            </div>
+          </div>
+
+          <!-- Gerenciar Cartelas -->
+          <div class="bg-white text-gray-800 p-6 rounded-xl">
+            <h3 class="text-xl font-bold mb-4">📋 Gerenciar Cartões</h3>
+            <div id="adminCartelasGrid" class="space-y-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase / App -->
+    <script type="module">
+      /* =========================
+         Firebase SDK (v10+)
+      ========================== */
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        addDoc,
+        setDoc,
+        getDoc,
+        getDocs,
+        updateDoc,
+        deleteDoc,
+        onSnapshot,
+        writeBatch,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyB7UcJxEJHffsvCI_Y9Uylwy943RxBSIEA",
+        authDomain: "banco-e3302.firebaseapp.com",
+        projectId: "banco-e3302",
+        storageBucket: "banco-e3302.firebasestorage.app",
+        messagingSenderId: "669890747472",
+        appId: "1:669890747472:web:b3188add68fffb010f0555",
+      };
+
+      // Init
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      /* =========================
+         State/UI Elements
+      ========================== */
+      let isAdminMode = false;
+      let isUserLoggedIn = false;
+
+      const viewMode = document.getElementById("viewMode");
+      const adminMode = document.getElementById("adminMode");
+      const userLoginModal = document.getElementById("userLoginModal");
+      const adminLoginModal = document.getElementById("adminLoginModal");
+      const cartelasGrid = document.getElementById("cartelasGrid");
+      const adminCartelasGrid = document.getElementById("adminCartelasGrid");
+      const activeCodesList = document.getElementById("activeCodesList");
+
+      const userLoginBtn = document.getElementById("userLoginBtn");
+      const viewModeBtn = document.getElementById("viewModeBtn");
+      const adminModeBtn = document.getElementById("adminModeBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const adminBadge = document.getElementById("adminBadge");
+
+      const cartelasColRef = collection(db, "cartelas");
+      const codesColRef = collection(db, "codes");
+
+      let allCartelas = []; // cache onSnapshot
+      let allCodes = [];
+
+      /* =========================
+         UI Helpers
+      ========================== */
+      function updateHeaderButtons(mode) {
+        if (mode === "user") {
+          userLoginBtn.classList.add("hidden");
+          viewModeBtn.classList.remove("hidden");
+          adminModeBtn.classList.remove("hidden");
+          logoutBtn.classList.remove("hidden");
+        } else if (mode === "admin") {
+          userLoginBtn.classList.add("hidden");
+          viewModeBtn.classList.remove("hidden");
+          adminModeBtn.classList.add("hidden");
+          logoutBtn.classList.remove("hidden");
+        } else {
+          userLoginBtn.classList.remove("hidden");
+          viewModeBtn.classList.add("hidden");
+          adminModeBtn.classList.remove("hidden");
+          logoutBtn.classList.add("hidden");
+        }
+      }
+
+      function switchMode(admin) {
+        isAdminMode = admin;
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        if (admin) {
+          welcomeScreen.classList.add("hidden");
+          viewMode.classList.add("hidden");
+          adminMode.classList.remove("hidden");
+          renderAdminCartelas(allCartelas);
+          renderActiveCodes(allCodes);
+          updateHeaderButtons("admin");
+        } else {
+          welcomeScreen.classList.add("hidden");
+          adminMode.classList.add("hidden");
+          viewMode.classList.remove("hidden");
+          renderCartelas(allCartelas);
+          updateHeaderButtons("user");
+        }
+      }
+
+      function showUserLogin() {
+        userLoginModal.classList.remove("hidden");
+      }
+      function hideUserLogin() {
+        userLoginModal.classList.add("hidden");
+        document.getElementById("userLoginUser").value = "";
+        document.getElementById("userLoginPass").value = "";
+      }
+      function showAdminLogin() {
+        adminLoginModal.classList.remove("hidden");
+      }
+      function hideAdminLogin() {
+        adminLoginModal.classList.add("hidden");
+        document.getElementById("adminEmail").value = "";
+        document.getElementById("adminPass").value = "";
+      }
+
+      async function handleLogout() {
+        try {
+          await signOut(auth);
+        } catch (e) {}
+        isAdminMode = false;
+        isUserLoggedIn = false;
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        adminMode.classList.add("hidden");
+        viewMode.classList.add("hidden");
+        welcomeScreen.classList.remove("hidden");
+        adminBadge.classList.add("hidden");
+        adminBadge.textContent = "";
+        updateHeaderButtons("logout");
+      }
+
+      function formatPhone(phone) {
+        return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      }
+      function hidePhoneNumbers(phone) {
+        return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-*");
+      }
+
+      function progressWidth(stamped, stamps) {
+        return Math.round((stamped.length / stamps) * 100);
+      }
+      function nextEmptyStamp(stamped, stamps) {
+        for (let i = 1; i <= stamps; i++) {
+          if (!stamped.includes(i)) return i;
+        }
+        return null;
+      }
+
+      /* =========================
+         Auth
+      ========================== */
+      async function handleAdminLogin() {
+        const email = document.getElementById("adminEmail").value.trim();
+        const pass = document.getElementById("adminPass").value.trim();
+        if (!email || !pass) return alert("Preencha e-mail e senha.");
+        try {
+          await signInWithEmailAndPassword(auth, email, pass);
+          hideAdminLogin();
+          switchMode(true);
+        } catch (e) {
+          console.error(e);
+          alert(
+            "❌ Não foi possível entrar. Verifique as credenciais e se Email/Password está habilitado no Firebase."
+          );
+        }
+      }
+
+      function handleUserLogin() {
+        const user = document.getElementById("userLoginUser").value.trim();
+        const pass = document.getElementById("userLoginPass").value.trim();
+        if (user === "cliente" && pass === "123456") {
+          hideUserLogin();
+          isUserLoggedIn = true;
+          switchMode(false);
+        } else {
+          alert(
+            "❌ Credenciais do cliente inválidas. Use usuário: cliente | senha: 123456"
+          );
+        }
+      }
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          adminBadge.classList.remove("hidden");
+          adminBadge.textContent = `Admin: ${user.email}`;
+        } else {
+          adminBadge.classList.add("hidden");
+          adminBadge.textContent = "";
+        }
+      });
+
+      /* =========================
+         Render
+      ========================== */
+      function createCartelaHTML(cartela, isAdmin = false) {
+        const stampsButtons = [];
+        for (let i = 1; i <= cartela.stamps; i++) {
+          const stamped = cartela.stamped.includes(i);
+          stampsButtons.push(`
+            <div class="stamp-circle ${stamped ? "stamped" : ""}" ${
+            isAdmin ? `onclick="window.toggleStamp('${cartela.id}', ${i})"` : ""
+          }>
+              ${stamped ? "✓" : i}
+            </div>
+          `);
+        }
+        const progress = progressWidth(cartela.stamped, cartela.stamps);
+        return `
+          <div class="cartela p-6 ${
+            !cartela.active ? "opacity-60 border-red-300" : ""
+          }">
+            <div class="text-center mb-4">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <div class="text-xl font-bold text-gray-800">👤 ${
+                  cartela.name
+                }</div>
+                ${
+                  isAdmin
+                    ? `<span class="text-xs px-2 py-1 rounded-full ${
+                        cartela.active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }">${cartela.active ? "Ativo" : "Inativo"}</span>`
+                    : ""
+                }
+                ${
+                  !cartela.active && !isAdmin
+                    ? `<span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">Inativo</span>`
+                    : ""
+                }
+              </div>
+              <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${
+                isAdmin
+                  ? formatPhone(cartela.phone)
+                  : hidePhoneNumbers(cartela.phone)
+              }</div>
+              <div class="text-sm text-gray-600">Pontos: ${
+                cartela.stamped.length
+              }/${cartela.stamps} (${progress}%)</div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width:${progress}%"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-5 gap-3 justify-items-center">
+              ${stampsButtons.join("")}
+            </div>
+
+            ${
+              !cartela.active
+                ? `
+              <div class="mt-4 p-4 bg-red-100 border-2 border-red-400 rounded-lg text-center">
+                <div class="text-red-800 font-bold text-lg mb-2">⚠ CARTÃO INATIVO ⚠</div>
+                <div class="text-red-600 font-semibold">Este cartão está temporariamente desabilitado</div>
+              </div>
+            `
+                : cartela.stamped.length === cartela.stamps
+                ? `
+              <div class="mt-4 p-4 bg-gradient-to-r from-green-100 to-yellow-100 border-2 border-green-400 rounded-lg text-center">
+                <div class="text-green-800 font-bold text-lg mb-2">🎉 CARTÃO COMPLETO! 🎉</div>
+                <div class="text-orange-600 font-semibold">🍔 PRÊMIO: R$ 50 iFood Voucher</div>
+              </div>
+            `
+                : `
+              <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="text-blue-700 font-medium text-center mb-3">🔢 Insira o código para acumular pontos</div>
+                ${
+                  !isAdmin
+                    ? `
+                  <div class="flex gap-2">
+                    <input type="text" id="code-${cartela.id}" placeholder="Digite o código"
+                           class="flex-1 p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    <button onclick="window.submitCode('${cartela.id}')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                      Validar
+                    </button>
+                  </div>
+                `
+                    : ""
+                }
+              </div>
+            `
+            }
+
+            ${
+              isAdmin
+                ? `
+              <div class="mt-4 grid grid-cols-3 gap-2">
+                <button onclick="window.toggleUserStatus('${cartela.id}')"
+                        class="bg-${
+                          cartela.active ? "orange" : "green"
+                        }-500 hover:bg-${
+                    cartela.active ? "orange" : "green"
+                  }-600 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors">
+                  ${cartela.active ? "⏸ Desativar" : "▶ Ativar"}
+                </button>
+                <button onclick="window.resetCartela('${cartela.id}')"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-3 rounded-lg text-sm transition-colors">
+                  🔄 Resetar
+                </button>
+                <button onclick="window.editCartela('${cartela.id}')"
+                        class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+                  ✏ Editar
+                </button>
+              </div>
+            `
+                : ""
+            }
+          </div>
+        `;
+      }
+
+      function renderCartelas(cartelas) {
+        const searchInput = document.getElementById("searchInput");
+        const term = (searchInput?.value || "").toLowerCase().trim();
+        const searchResults = document.getElementById("searchResults");
+
+        const activeCartelas = cartelas.filter((c) => c.active);
+        const src = term
+          ? activeCartelas.filter(
+              (c) =>
+                c.name.toLowerCase().includes(term) || c.phone.includes(term)
+            )
+          : activeCartelas;
+
+        cartelasGrid.innerHTML = src
+          .map((c) => createCartelaHTML(c, false))
+          .join("");
+
+        if (!term) {
+          searchResults?.classList.add("hidden");
+        } else {
+          searchResults?.classList.remove("hidden");
+          searchResults.innerHTML = src.length
+            ? `<p class="text-green-600 font-semibold">${src.length} cartão(s) encontrado(s)</p>`
+            : `<p class="text-red-600 font-semibold">Nenhum cartão encontrado para "${term}"</p>`;
+        }
+      }
+
+      function renderAdminCartelas(cartelas) {
+        adminCartelasGrid.innerHTML = cartelas
+          .map((c) => createCartelaHTML(c, true))
+          .join("");
+      }
+
+      /* =========================
+         Firestore listeners
+      ========================== */
+      onSnapshot(cartelasColRef, (snap) => {
+        allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        if (isAdminMode) renderAdminCartelas(allCartelas);
+        else renderCartelas(allCartelas);
+      });
+
+      onSnapshot(codesColRef, (snap) => {
+        allCodes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        if (isAdminMode) renderActiveCodes(allCodes);
+      });
+
+      /* =========================
+         Cartelas: ações (CRUD)
+      ========================== */
+      async function addNewCartela() {
+        const name = document.getElementById("newName").value.trim();
+        const phone = document.getElementById("newPhone").value.trim();
+        const stamps = parseInt(document.getElementById("newStamps").value, 10);
+        if (!name || !phone || !stamps)
+          return alert("❌ Preencha todos os campos!");
+        if (phone.length < 10 || phone.length > 11)
+          return alert("❌ Telefone deve ter 10 ou 11 dígitos!");
+        if (stamps !== 10)
+          return alert("❌ Todos os cartões devem ter exatamente 10 pontos!");
+
+        await addDoc(cartelasColRef, {
+          name,
+          phone,
+          stamps,
+          stamped: [],
+          active: true,
+          createdAt: serverTimestamp(),
+        });
+        document.getElementById("newName").value = "";
+        document.getElementById("newPhone").value = "";
+        document.getElementById("newStamps").value = "10";
+        alert("✅ Cartão fidelidade criado com sucesso!");
+      }
+
+      async function toggleStamp(cartelaId, stampNumber) {
+        const c = allCartelas.find((x) => x.id === cartelaId);
+        if (!c) return;
+        const newStamped = c.stamped.includes(stampNumber)
+          ? c.stamped.filter((n) => n !== stampNumber)
+          : [...c.stamped, stampNumber].sort((a, b) => a - b);
+        await updateDoc(doc(db, "cartelas", cartelaId), {
+          stamped: newStamped,
+        });
+      }
+
+      async function resetCartela(cartelaId) {
+        if (!confirm("Tem certeza que deseja resetar este cartão?")) return;
+        await updateDoc(doc(db, "cartelas", cartelaId), { stamped: [] });
+
+        // limpar subcoleção usedCodes
+        const usedRef = collection(db, "cartelas", cartelaId, "usedCodes");
+        const usedSnap = await getDocs(usedRef);
+        const batch = writeBatch(db);
+        usedSnap.forEach((d) =>
+          batch.delete(doc(db, "cartelas", cartelaId, "usedCodes", d.id))
+        );
+        await batch.commit();
+
+        alert("✅ Cartão resetado!");
+      }
+
+      async function toggleUserStatus(cartelaId) {
+        const c = allCartelas.find((x) => x.id === cartelaId);
+        if (!c) return;
+        const action = c.active ? "desativar" : "ativar";
+        if (!confirm(`Tem certeza que deseja ${action} o cartão de ${c.name}?`))
+          return;
+        await updateDoc(doc(db, "cartelas", cartelaId), { active: !c.active });
+        alert(`✅ Cartão ${!c.active ? "ativado" : "desativado"} com sucesso!`);
+      }
+
+      async function editCartela(cartelaId) {
+        const c = allCartelas.find((x) => x.id === cartelaId);
+        if (!c) return;
+        const newName = prompt(
+          `Editar nome do cliente:\n(Atual: ${c.name})`,
+          c.name
+        );
+        if (newName === null) return;
+        if (!newName.trim()) return alert("❌ Nome não pode estar vazio!");
+        const newPhone = prompt(
+          `Editar telefone do cliente:\n(Atual: ${c.phone})`,
+          c.phone
+        );
+        if (newPhone === null) return;
+        if (!newPhone.trim() || newPhone.length < 10 || newPhone.length > 11)
+          return alert("❌ Telefone deve ter 10 ou 11 dígitos!");
+        await updateDoc(doc(db, "cartelas", cartelaId), {
+          name: newName.trim(),
+          phone: newPhone.trim(),
+        });
+        alert("✅ Cartão editado com sucesso!");
+      }
+
+      async function blockAllCards() {
+        if (!confirm("Bloquear todos os cartões?")) return;
+        const batch = writeBatch(db);
+        allCartelas.forEach((c) =>
+          batch.update(doc(db, "cartelas", c.id), { active: false })
+        );
+        await batch.commit();
+        alert("🔒 Todos os cartões foram bloqueados com sucesso!");
+      }
+
+      async function deleteAllCards() {
+        if (
+          !confirm(
+            "⚠ ATENÇÃO: Esta ação é IRREVERSÍVEL!\n\nDeseja EXCLUIR TODOS os cartões?"
+          )
+        )
+          return;
+        const k = prompt(
+          '🚨 CONFIRMAÇÃO FINAL 🚨\nDigite "CONFIRMAR" em maiúsculas para prosseguir:'
+        );
+        if (k !== "CONFIRMAR")
+          return alert("❌ Confirmação incorreta. Operação cancelada.");
+        for (const c of allCartelas) {
+          const usedRef = collection(db, "cartelas", c.id, "usedCodes");
+          const usedSnap = await getDocs(usedRef);
+          const batch = writeBatch(db);
+          usedSnap.forEach((d) =>
+            batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
+          );
+          batch.delete(doc(db, "cartelas", c.id));
+          await batch.commit();
+        }
+        alert("🗑 Todos os cartões foram excluídos permanentemente!");
+      }
+
+      /* =========================
+         Códigos (codes)
+      ========================== */
+      function renderActiveCodes(codes) {
+        if (!codes.length) {
+          activeCodesList.innerHTML =
+            '<p class="text-gray-500 text-sm">Nenhum código cadastrado</p>';
+          return;
+        }
+        activeCodesList.innerHTML = codes
+          .map(
+            (code) => `
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border ${
+            code.active ? "border-green-200" : "border-red-200"
+          }">
+            <div class="flex items-center gap-3">
+              <span class="font-mono font-bold text-lg ${
+                code.active ? "text-green-700" : "text-red-500"
+              }">${code.id}</span>
+              <span class="text-sm text-gray-600">1 ponto</span>
+              <span class="text-xs px-2 py-1 rounded-full ${
+                code.active
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }">
+                ${code.active ? "Ativo" : "Inativo"}
+              </span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="window.toggleCodeStatus('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded ${
+              code.active
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-green-500 hover:bg-green-600"
+            } text-white transition-colors">
+                ${code.active ? "Desativar" : "Ativar"}
+              </button>
+              <button onclick="window.editCode('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors">
+                Editar
+              </button>
+              <button onclick="window.deleteCode('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white transition-colors">
+                Excluir
+              </button>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      async function addNewCode() {
+        const code = document
+          .getElementById("newCode")
+          .value.trim()
+          .toUpperCase();
+        if (!code) return alert("❌ Digite um código!");
+        const ref = doc(db, "codes", code);
+        const s = await getDoc(ref);
+        if (s.exists()) return alert("❌ Este código já existe!");
+        await setDoc(ref, {
+          points: 1,
+          active: true,
+          createdAt: serverTimestamp(),
+        });
+        document.getElementById("newCode").value = "";
+        document.getElementById("codePoints").value = "1";
+        alert("✅ Código criado com sucesso! (Vale 1 ponto)");
+      }
+
+      async function toggleCodeStatus(codeId) {
+        const ref = doc(db, "codes", codeId);
+        const s = await getDoc(ref);
+        if (!s.exists()) return;
+        await updateDoc(ref, { active: !s.data().active });
+      }
+
+      async function editCode(oldCode) {
+        const n = prompt(
+          `Editar código "${oldCode}".\nDigite o novo código:`,
+          oldCode
+        );
+        if (n === null) return;
+        const up = n.trim().toUpperCase();
+        if (!up) return;
+        if (up === oldCode) return alert("⚠ O código não foi alterado.");
+        const newRef = doc(db, "codes", up);
+        if ((await getDoc(newRef)).exists())
+          return alert("❌ Já existe um código com esse nome!");
+        const oldRef = doc(db, "codes", oldCode);
+        const oldSnap = await getDoc(oldRef);
+        if (!oldSnap.exists()) return;
+        await setDoc(newRef, oldSnap.data());
+        await deleteDoc(oldRef);
+        alert(`✅ Código alterado de "${oldCode}" para "${up}"!`);
+      }
+
+      async function deleteCode(codeId) {
+        if (!confirm(`Tem certeza que deseja excluir o código ${codeId}?`))
+          return;
+        await deleteDoc(doc(db, "codes", codeId));
+        alert("✅ Código excluído com sucesso!");
+      }
+
+      /* =========================
+         Regras de pontos / submitCode
+      ========================== */
+      async function submitCode(cartelaId) {
+        const input = document.getElementById(`code-${cartelaId}`);
+        const code = (input?.value || "").trim().toUpperCase();
+        if (!code) return alert("❌ Digite um código!");
+        const cartela = allCartelas.find((c) => c.id === cartelaId);
+        if (!cartela) return;
+
+        if (!cartela.active) {
+          input.value = "";
+          return alert("❌ Este cartão está inativo!");
+        }
+        if (cartela.stamped.length >= cartela.stamps) {
+          input.value = "";
+          return alert("⚠ Cartão já está completo!");
+        }
+
+        // validar código
+        const codeRef = doc(db, "codes", code);
+        const codeSnap = await getDoc(codeRef);
+        if (!codeSnap.exists() || !codeSnap.data().active) {
+          input.value = "";
+          return alert("❌ Código inválido ou inativo!");
+        }
+
+        // checar se já usado nesta cartela
+        const usedRef = doc(db, "cartelas", cartelaId, "usedCodes", code);
+        if ((await getDoc(usedRef)).exists()) {
+          input.value = "";
+          return alert("❌ Este código já foi usado neste cartão!");
+        }
+
+        // adicionar próximo ponto
+        const next = nextEmptyStamp(cartela.stamped, cartela.stamps);
+        if (!next) {
+          input.value = "";
+          return alert("⚠ Não há pontos disponíveis.");
+        }
+
+        await updateDoc(doc(db, "cartelas", cartelaId), {
+          stamped: [...cartela.stamped, next].sort((a, b) => a - b),
+        });
+        await setDoc(usedRef, { usedAt: serverTimestamp() });
+        input.value = "";
+
+        const updated = cartela.stamped.length + 1;
+        if (updated === cartela.stamps) {
+          alert(
+            `🎉 PARABÉNS ${cartela.name}! Você completou 10 pontos!\n⚠ Nova rodada: todos os cartões serão zerados.`
+          );
+          await resetAllCardsAndUsedCodes();
+        } else {
+          alert("✅ Código válido! 1 ponto adicionado!");
+        }
+      }
+
+      async function resetAllCardsAndUsedCodes() {
+        // zera stamped de todos
+        const batchSize = 400;
+        for (let i = 0; i < allCartelas.length; i += batchSize) {
+          const slice = allCartelas.slice(i, i + batchSize);
+          const batch = writeBatch(db);
+          slice.forEach((c) =>
+            batch.update(doc(db, "cartelas", c.id), { stamped: [] })
+          );
+          await batch.commit();
+        }
+        // limpa usedCodes de todos
+        for (const c of allCartelas) {
+          const usedRef = collection(db, "cartelas", c.id, "usedCodes");
+          const usedSnap = await getDocs(usedRef);
+          const batch = writeBatch(db);
+          usedSnap.forEach((d) =>
+            batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
+          );
+          await batch.commit();
+        }
+      }
+
+      /* =========================
+         Busca (cliente)
+      ========================== */
+      function filterCartelas() {
+        renderCartelas(allCartelas);
+      }
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        renderCartelas(allCartelas);
+        document.getElementById("searchResults").classList.add("hidden");
+      }
+
+      /* =========================
+         Eventos de UI
+      ========================== */
+      document
+        .getElementById("userLoginBtn")
+        .addEventListener("click", showUserLogin);
+      document
+        .getElementById("viewModeBtn")
+        .addEventListener("click", () => switchMode(false));
+      document.getElementById("adminModeBtn").addEventListener("click", () => {
+        if (auth.currentUser) switchMode(true);
+        else showAdminLogin();
+      });
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", handleLogout);
+      document
+        .getElementById("userLoginBtn2")
+        .addEventListener("click", handleUserLogin);
+      document
+        .getElementById("cancelUserLoginBtn")
+        .addEventListener("click", hideUserLogin);
+      document
+        .getElementById("adminLoginBtn2")
+        .addEventListener("click", handleAdminLogin);
+      document
+        .getElementById("cancelAdminLoginBtn")
+        .addEventListener("click", hideAdminLogin);
+      document
+        .getElementById("addCartelaBtn")
+        .addEventListener("click", addNewCartela);
+      document
+        .getElementById("blockAllCardsBtn")
+        .addEventListener("click", blockAllCards);
+      document
+        .getElementById("deleteAllCardsBtn")
+        .addEventListener("click", deleteAllCards);
+      document
+        .getElementById("addCodeBtn")
+        .addEventListener("click", addNewCode);
+
+      // Expor funções usadas inline
+      window.toggleStamp = toggleStamp;
+      window.submitCode = submitCode;
+      window.toggleUserStatus = toggleUserStatus;
+      window.resetCartela = resetCartela;
+      window.editCartela = editCartela;
+      window.filterCartelas = filterCartelas;
+      window.clearSearch = clearSearch;
+      window.toggleCodeStatus = toggleCodeStatus;
+      window.editCode = editCode;
+      window.deleteCode = deleteCode;
+
+      // Boot
+      updateHeaderButtons("logout");
+    </script>
+  </body>
+</html>
