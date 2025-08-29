@@ -382,32 +382,41 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t mt-10 relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <!-- Direitos -->
-        <div class="text-center text-sm text-gray-600">
-          © <span id="yearNow"></span> — Todos os direitos reservados.
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <!-- Logo à esquerda -->
+        <div class="flex-shrink-0">
+          <img src="logo.png" alt="Logo" class="h-10 w-auto" />
         </div>
-        <!-- Termos -->
-        <div class="text-center mt-1">
-          <button
-            id="openPrivacy"
-            class="text-blue-500 hover:underline text-sm"
+
+        <!-- Centro: Direitos e Termos -->
+        <div class="flex flex-col items-center text-sm text-gray-600">
+          <div>
+            © <span id="yearNow"></span> — Todos os direitos reservados.
+          </div>
+          <div class="mt-1">
+            <button
+              id="openPrivacy"
+              class="text-blue-500 hover:underline text-sm"
+            >
+              Termo de Privacidade
+            </button>
+          </div>
+        </div>
+
+        <!-- Direita: Desenvolvimento -->
+        <div class="text-xs text-gray-400 text-center sm:text-right">
+          desenvolvido em parceria com
+          <a
+            href="https://defan.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-blue-500 transition-colors"
           >
-            Termo de Privacidade
-          </button>
+            Defan Soluções Digitais
+          </a>
         </div>
-      </div>
-      <!-- Desenvolvimento canto direito -->
-      <div class="text-center text-xs text-gray-400 mt-2">
-        desenvolvido por
-        <a
-          href="https://defan.com.br"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-blue-500 transition-colors"
-        >
-          Defan Soluções Digitais
-        </a>
       </div>
     </footer>
 

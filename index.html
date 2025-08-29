@@ -231,38 +231,77 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t mt-10 relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <!-- Direitos -->
-        <div class="text-center text-sm text-gray-600">
-          © <span id="yearNow"></span> — Todos os direitos reservados.
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <!-- Logo à esquerda -->
+        <div class="flex-shrink-0">
+          <img src="logo.png" alt="Logo" class="h-10 w-auto" />
         </div>
 
-        <!-- Termos -->
-        <div class="text-center mt-1">
-          <button
-            id="openPrivacy"
-            class="text-blue-500 hover:underline text-sm"
+        <!-- Centro: Direitos e Termos -->
+        <div class="flex flex-col items-center text-sm text-gray-600">
+          <div>
+            © <span id="yearNow"></span> — Todos os direitos reservados.
+          </div>
+          <div class="mt-1">
+            <button
+              id="openPrivacy"
+              class="text-blue-500 hover:underline text-sm"
+            >
+              Termo de Privacidade
+            </button>
+          </div>
+        </div>
+
+        <!-- Direita: Desenvolvimento -->
+        <div class="text-xs text-gray-400 text-center sm:text-right">
+          desenvolvido em parceria com
+          <a
+            href="https://defan.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-blue-500 transition-colors"
           >
-            Termo de Privacidade
-          </button>
+            Defan Soluções Digitais
+          </a>
         </div>
-      </div>
-
-      <!-- Desenvolvimento canto direito -->
-      <div class="text-center text-xs text-gray-400 mt-2">
-        desenvolvido co
-        <a
-          href="https://defan.com.br"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-blue-500 transition-colors"
-        >
-          Defan Soluções Digitais
-        </a>
       </div>
     </footer>
 
-    <!-- Firebase: leitura do prêmio em tempo real -->
+    <!-- Modal Privacidade -->
+    <div
+      id="privacyModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[80]"
+    >
+      <div class="bg-white w-[min(720px,94vw)] p-6 rounded-xl shadow-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">Termo de Privacidade</h3>
+          <button
+            id="closePrivacy"
+            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+          >
+            Fechar
+          </button>
+        </div>
+        <div class="text-sm text-gray-700 space-y-3">
+          <p>
+            Coletamos e usamos apenas os dados necessários para operar o
+            programa de fidelidade: nome e telefone do cliente, pontos
+            acumulados no cartão, e histórico de ganhadores.
+          </p>
+          <p>
+            Não vendemos nem compartilhamos dados com terceiros. Você pode
+            solicitar correção ou exclusão do seu cartão a qualquer momento.
+          </p>
+          <p>
+            Os dados são armazenados com segurança no Firebase (Google Cloud).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase + Script da página -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
       import {
@@ -303,13 +342,48 @@
 
         if (validade && validEl) {
           validEl.classList.remove("hidden");
-          // o último span dentro da pílula é o texto
           const textSpan = validEl.querySelector("span:last-child");
           if (textSpan) textSpan.textContent = validade;
         } else if (validEl) {
           validEl.classList.add("hidden");
         }
       });
+
+      // ====== LÓGICA DA MODAL DE PRIVACIDADE ======
+      const privacyModal = document.getElementById("privacyModal");
+      const openPrivacy = document.getElementById("openPrivacy");
+      const closePrivacy = document.getElementById("closePrivacy");
+
+      function openPrivacyModal() {
+        if (!privacyModal) return;
+        privacyModal.classList.remove("hidden");
+        privacyModal.classList.add("flex"); // para centralizar com flex
+      }
+      function closePrivacyModal() {
+        if (!privacyModal) return;
+        privacyModal.classList.add("hidden");
+        privacyModal.classList.remove("flex");
+      }
+
+      if (openPrivacy) {
+        openPrivacy.addEventListener("click", openPrivacyModal);
+      }
+      if (closePrivacy) {
+        closePrivacy.addEventListener("click", closePrivacyModal);
+      }
+
+      // Fechar clicando fora (backdrop)
+      if (privacyModal) {
+        privacyModal.addEventListener("click", (e) => {
+          if (e.target === privacyModal) closePrivacyModal();
+        });
+      }
+
+      // Fechar com ESC
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closePrivacyModal();
+      });
+      // =============================================
     </script>
   </body>
 </html>

@@ -258,10 +258,50 @@
       ></div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-10 relative">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <!-- Logo à esquerda -->
+        <div class="flex-shrink-0">
+          <img src="logo.png" alt="Logo" class="h-10 w-auto" />
+        </div>
+
+        <!-- Centro: Direitos e Termos -->
+        <div class="flex flex-col items-center text-sm text-gray-600">
+          <div>
+            © <span id="yearNow"></span> — Todos os direitos reservados.
+          </div>
+          <div class="mt-1">
+            <button
+              id="openPrivacy"
+              class="text-blue-500 hover:underline text-sm"
+            >
+              Termo de Privacidade
+            </button>
+          </div>
+        </div>
+
+        <!-- Direita: Desenvolvimento -->
+        <div class="text-xs text-gray-400 text-center sm:text-right">
+          desenvolvido em parceria com
+          <a
+            href="https://defan.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-blue-500 transition-colors"
+          >
+            Defan Soluções Digitais
+          </a>
+        </div>
+      </div>
+    </footer>
+
     <!-- Modal Privacidade -->
     <div
       id="privacyModal"
-      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[60]"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[80]"
     >
       <div class="bg-white w-[min(720px,94vw)] p-6 rounded-xl shadow-2xl">
         <div class="flex items-center justify-between mb-3">
@@ -276,11 +316,12 @@
         <div class="text-sm text-gray-700 space-y-3">
           <p>
             Coletamos e usamos apenas os dados necessários para operar o
-            programa de fidelidade.
+            programa de fidelidade: nome e telefone do cliente, pontos
+            acumulados no cartão, e histórico de ganhadores.
           </p>
           <p>
-            Você pode solicitar correção ou exclusão do seu cartão a qualquer
-            momento.
+            Não vendemos nem compartilhamos dados com terceiros. Você pode
+            solicitar correção ou exclusão do seu cartão a qualquer momento.
           </p>
           <p>
             Os dados são armazenados com segurança no Firebase (Google Cloud).
@@ -288,33 +329,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t mt-10 relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div class="text-center text-sm text-gray-600">
-          © <span id="yearNow"></span> — Todos os direitos reservados.
-        </div>
-        <div class="text-center mt-1">
-          <button
-            id="openPrivacy"
-            class="text-blue-500 hover:underline text-sm"
-          >
-            Termo de Privacidade
-          </button>
-        </div>
-      </div>
-      <div class="text-center text-xs text-gray-400 mt-2">
-        desenvolvido em parceria com
-        <a
-          href="https://defan.com.br"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-blue-500 transition-colors"
-          >Defan Soluções Digitais</a
-        >
-      </div>
-    </footer>
 
     <!-- Firebase / App -->
     <script type="module">
