@@ -218,7 +218,7 @@
         <div class="container mx-auto">
           <h2 class="text-3xl font-bold mb-6">⚙ Painel Administrativo</h2>
 
-          <!-- PRÊMIO ATUAL -->
+          <!-- PRÊMIO ATUAL (APENAS 2 INPUTS) -->
           <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
             <div class="flex items-center justify-between mb-4">
               <h3 class="text-xl font-bold">
@@ -226,28 +226,23 @@
               </h3>
               <span id="prizeSavedAt" class="text-xs text-gray-500"></span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
-                id="prizeTitle"
+                id="premioInput"
                 class="p-3 border rounded-lg"
-                placeholder="Título (ex.: PRÊMIO ESPECIAL)"
+                placeholder="💰 PRÊMIO: R$ 50 VOUCHER IFOOD"
               />
               <input
-                id="prizeHighlight"
+                id="validadeInput"
                 class="p-3 border rounded-lg"
-                placeholder="Destaque (ex.: R$ 50 iFood Voucher)"
-              />
-              <input
-                id="prizeShort"
-                class="p-3 border rounded-lg"
-                placeholder="Chamada (ex.: Complete 10 pontos)"
+                placeholder="✅ Válido em qualquer restaurante do iFood!"
               />
               <button id="savePrizeBtn" class="btn btn-green">
                 💾 Salvar Prêmio
               </button>
             </div>
             <p class="text-sm text-gray-600 mt-3">
-              Editou? Clique em salvar — o cliente recebe em tempo real.
+              Edite e salve — o cliente recebe em tempo real.
             </p>
           </div>
 
@@ -367,18 +362,14 @@
           <p>
             Coletamos e usamos apenas os dados necessários para operar o
             programa de fidelidade: nome e telefone do cliente, pontos
-            acumulados no cartão, e histórico de ganhadores. Esses dados são
-            usados exclusivamente para registrar carimbos, identificar o
-            ganhador e entregar o prêmio.
+            acumulados no cartão, e histórico de ganhadores.
           </p>
           <p>
             Não vendemos nem compartilhamos dados com terceiros. Você pode
-            solicitar correção ou exclusão do seu cartão a qualquer momento pelo
-            contato do estabelecimento.
+            solicitar correção ou exclusão do seu cartão a qualquer momento.
           </p>
           <p>
             Os dados são armazenados com segurança no Firebase (Google Cloud).
-            Em caso de dúvidas, fale com o administrador do estabelecimento.
           </p>
         </div>
       </div>
@@ -426,7 +417,7 @@
       const db = getFirestore(app);
       await setPersistence(auth, browserLocalPersistence);
 
-      /* --------- Refs / State --------- */
+      /* --------- Refs / UI --------- */
       const adminLoginModal = document.getElementById("adminLoginModal");
       const adminMode = document.getElementById("adminMode");
       const adminBadge = document.getElementById("adminBadge");
@@ -458,23 +449,24 @@
       const yearNow = document.getElementById("yearNow");
       yearNow.textContent = new Date().getFullYear();
 
-      // Prize inputs
-      const prizeTitle = document.getElementById("prizeTitle");
-      const prizeHighlight = document.getElementById("prizeHighlight");
-      const prizeShort = document.getElementById("prizeShort");
+      // PRÊMIO (2 inputs)
+      const premioInput = document.getElementById("premioInput");
+      const validadeInput = document.getElementById("validadeInput");
       const prizeSavedAt = document.getElementById("prizeSavedAt");
       const savePrizeBtn = document.getElementById("savePrizeBtn");
-      const prizeDocRef = doc(db, "settings", "prize");
+      const prizeDocRef = doc(db, "settings", "premioAtual");
 
-      // Collections
+      // Coleções
       const cartelasColRef = collection(db, "cartelas");
       const codesColRef = collection(db, "codes");
       const winnersColRef = collection(db, "winners");
 
+      // Estado
       let allCartelas = [];
       let allCodes = [];
       let allWinners = [];
-      let deliverCtx = null; // {winnerId, cartelaId}
+      let deliverCtx = null;
+      let appInitialized = false; // evita listeners duplicados
 
       /* --------- Auth UI --------- */
       function showLogin() {
@@ -520,47 +512,111 @@
       });
       logoutBtn.addEventListener("click", handleLogout);
 
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           hideLogin();
           showPanel();
           adminBadge.classList.remove("hidden");
           adminBadge.textContent = `Admin: ${user.email}`;
+          await initAppOnce(); // monta tudo já na entrada
         } else {
           hidePanel();
           showLogin();
         }
       });
 
-      /* --------- Utils --------- */
+      /* --------- Helpers --------- */
       const fmtPhone = (p) =>
         (p || "").replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
       const progressWidth = (stamped, stamps) =>
         Math.round(((stamped?.length || 0) / stamps) * 100);
       const hasOpenWinner = (c) => c.winner && c.winner.delivered === false;
 
-      /* --------- Prize (settings/prize) --------- */
-      onSnapshot(prizeDocRef, (snap) => {
-        if (snap.exists()) {
-          const d = snap.data();
-          prizeTitle.value = d.title || "";
-          prizeHighlight.value = d.highlight || "";
-          prizeShort.value = d.short || "";
+      /* --------- INIT (carrega imediato + listeners) --------- */
+      async function initAppOnce() {
+        if (appInitialized) return;
+        appInitialized = true;
+
+        // 1) Carregamento IMEDIATO
+        await Promise.all([
+          loadPrizeOnce(),
+          loadCodesOnce(),
+          loadCartelasOnce(),
+          loadWinnersOnce(),
+        ]);
+
+        // 2) Listeners em tempo real
+        onSnapshot(prizeDocRef, (snap) => {
+          if (snap.exists()) {
+            const d = snap.data();
+            premioInput.value = d.premio || "";
+            validadeInput.value = d.validade || "";
+            prizeSavedAt.textContent = d.updatedAt?.toDate
+              ? `Atualizado em ${d.updatedAt.toDate().toLocaleString("pt-BR")}`
+              : "";
+          }
+        });
+
+        onSnapshot(cartelasColRef, (snap) => {
+          allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          renderAdminCartelas(allCartelas);
+        });
+
+        onSnapshot(codesColRef, (snap) => {
+          allCodes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          renderActiveCodes(allCodes);
+        });
+
+        onSnapshot(
+          query(winnersColRef, orderBy("createdAt", "desc")),
+          (snap) => {
+            allWinners = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            renderWinners();
+          }
+        );
+      }
+
+      async function loadPrizeOnce() {
+        const s = await getDoc(prizeDocRef);
+        if (s.exists()) {
+          const d = s.data();
+          premioInput.value = d.premio || "";
+          validadeInput.value = d.validade || "";
           prizeSavedAt.textContent = d.updatedAt?.toDate
             ? `Atualizado em ${d.updatedAt.toDate().toLocaleString("pt-BR")}`
             : "";
         }
-      });
+      }
+      async function loadCodesOnce() {
+        const qs = await getDocs(codesColRef);
+        allCodes = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderActiveCodes(allCodes);
+      }
+      async function loadCartelasOnce() {
+        const qs = await getDocs(cartelasColRef);
+        allCartelas = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderAdminCartelas(allCartelas);
+      }
+      async function loadWinnersOnce() {
+        const qs = await getDocs(
+          query(winnersColRef, orderBy("createdAt", "desc"))
+        );
+        allWinners = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderWinners();
+      }
+
+      /* --------- PRÊMIO (apenas 2 campos) --------- */
       savePrizeBtn.addEventListener("click", async () => {
+        const premio = (premioInput.value || "").trim();
+        const validade = (validadeInput.value || "").trim();
+        if (!premio || !validade) {
+          alert("Preencha Prêmio e Validade.");
+          return;
+        }
         try {
           await setDoc(
             prizeDocRef,
-            {
-              title: prizeTitle.value.trim(),
-              highlight: prizeHighlight.value.trim(),
-              short: prizeShort.value.trim(),
-              updatedAt: serverTimestamp(),
-            },
+            { premio, validade, updatedAt: serverTimestamp() },
             { merge: true }
           );
           alert("✅ Prêmio salvo!");
@@ -576,88 +632,80 @@
         for (let i = 1; i <= cartela.stamps; i++) {
           const stamped = (cartela.stamped || []).includes(i);
           stampsButtons.push(`
-          <div class="stamp-circle ${
-            stamped ? "stamped" : ""
-          }" onclick="window.toggleStamp('${cartela.id}',${i})">
-            ${stamped ? "✓" : i}
-          </div>
-        `);
+            <div class="stamp-circle ${
+              stamped ? "stamped" : ""
+            }" onclick="window.toggleStamp('${cartela.id}',${i})">
+              ${stamped ? "✓" : i}
+            </div>
+          `);
         }
         const progress = progressWidth(cartela.stamped || [], cartela.stamps);
         const winnerBlock = hasOpenWinner(cartela)
           ? `
-        <div class="mt-4 p-4 bg-emerald-50 border-2 border-amber-300 rounded-lg text-center">
-          <div class="text-green-800 font-bold text-lg">🎉 CARTÃO GANHADOR! 🎉</div>
-          <div class="text-amber-700 text-sm mt-1">
-            Ganhou em: <span class="font-semibold">
-              ${
+          <div class="mt-4 p-4 bg-emerald-50 border-2 border-amber-300 rounded-lg text-center">
+            <div class="text-green-800 font-bold text-lg">🎉 CARTÃO GANHADOR! 🎉</div>
+            <div class="text-amber-700 text-sm mt-1">
+              Ganhou em: <span class="font-semibold">${
                 cartela.winner.at?.toDate
                   ? cartela.winner.at.toDate().toLocaleString("pt-BR")
                   : "—"
-              }
-            </span>
-          </div>
-          <div class="text-gray-700 text-sm mt-1">Aguardando entrega do prêmio.</div>
-          <button class="mt-3 btn btn-green" onclick="window.openDeliver('${
-            cartela.winner.winnerDocId
-          }','${cartela.id}')">Entregar prêmio</button>
-        </div>`
+              }</span>
+            </div>
+            <div class="text-gray-700 text-sm mt-1">Aguardando entrega do prêmio.</div>
+            <button class="mt-3 btn btn-green" onclick="window.openDeliver('${
+              cartela.winner.winnerDocId
+            }','${cartela.id}')">Entregar prêmio</button>
+          </div>`
           : "";
 
         return `
-        <div class="cartela p-6 ${
-          !cartela.active ? "opacity-60 border-red-300" : ""
-        }">
-          <div class="text-center mb-4">
-            <div class="flex items-center justify-center gap-2 mb-1">
-              <div class="text-xl font-bold text-gray-800">👤 ${
-                cartela.name
-              }</div>
-              <span class="text-xs px-2 py-1 rounded-full ${
-                cartela.active
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }">
-                ${cartela.active ? "Ativo" : "Inativo"}
-              </span>
+          <div class="cartela p-6 ${
+            !cartela.active ? "opacity-60 border-red-300" : ""
+          }">
+            <div class="text-center mb-4">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <div class="text-xl font-bold text-gray-800">👤 ${
+                  cartela.name
+                }</div>
+                <span class="text-xs px-2 py-1 rounded-full ${
+                  cartela.active
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }">
+                  ${cartela.active ? "Ativo" : "Inativo"}
+                </span>
+              </div>
+              <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${fmtPhone(
+                cartela.phone
+              )}</div>
+              <div class="text-sm text-gray-600">Pontos: ${
+                (cartela.stamped || []).length
+              }/${cartela.stamps} (${progress}%)</div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
             </div>
-            <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${fmtPhone(
-              cartela.phone
+            <div class="grid grid-cols-5 gap-3 justify-items-center">${stampsButtons.join(
+              ""
             )}</div>
-            <div class="text-sm text-gray-600">Pontos: ${
-              (cartela.stamped || []).length
-            }/${cartela.stamps} (${progress}%)</div>
-            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-              <div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div>
+            ${winnerBlock}
+            <div class="mt-4 grid grid-cols-4 gap-2">
+              <button onclick="window.toggleUserStatus('${
+                cartela.id
+              }')" class="btn ${cartela.active ? "btn-amber" : "btn-green"}">
+                ${cartela.active ? "⏸ Desativar" : "▶ Ativar"}
+              </button>
+              <button onclick="window.resetCartela('${
+                cartela.id
+              }')" class="btn btn-amber">🔄 Resetar</button>
+              <button onclick="window.editCartela('${
+                cartela.id
+              }')" class="btn btn-prim">✏ Editar</button>
+              <button onclick="window.deleteCartela('${
+                cartela.id
+              }')" class="btn btn-red">🗑 Excluir</button>
             </div>
           </div>
-
-          <div class="grid grid-cols-5 gap-3 justify-items-center">${stampsButtons.join(
-            ""
-          )}</div>
-
-          ${winnerBlock}
-
-          <div class="mt-4 grid grid-cols-4 gap-2">
-            <button onclick="window.toggleUserStatus('${
-              cartela.id
-            }')" class="btn ${cartela.active ? "btn-amber" : "btn-green"}">
-              ${cartela.active ? "⏸ Desativar" : "▶ Ativar"}
-            </button>
-            <button onclick="window.resetCartela('${
-              cartela.id
-            }')" class="btn btn-amber">🔄 Resetar</button>
-            <button onclick="window.editCartela('${
-              cartela.id
-            }')" class="btn btn-prim">✏ Editar</button>
-            <button onclick="window.deleteCartela('${
-              cartela.id
-            }')" class="btn btn-red">🗑 Excluir</button>
-          </div>
-        </div>
-      `;
+        `;
       }
-
       function renderAdminCartelas(cartelas) {
         const term = (searchCards.value || "").toLowerCase().trim();
         const src = term
@@ -685,37 +733,37 @@
         activeCodesList.innerHTML = codes
           .map(
             (code) => `
-        <div class="flex items-center justify-between p-3 bg-white rounded-lg border ${
-          code.active ? "border-green-200" : "border-red-200"
-        }">
-          <div class="flex items-center gap-3">
-            <span class="font-mono font-bold text-lg ${
-              code.active ? "text-green-700" : "text-red-500"
-            }">${code.id}</span>
-            <span class="text-sm text-gray-600">1 ponto</span>
-            <span class="text-xs px-2 py-1 rounded-full ${
-              code.active
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }">
-              ${code.active ? "Ativo" : "Inativo"}
-            </span>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="window.toggleCodeStatus('${
-              code.id
-            }')" class="text-xs px-3 py-1 rounded ${
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border ${
+            code.active ? "border-green-200" : "border-red-200"
+          }">
+            <div class="flex items-center gap-3">
+              <span class="font-mono font-bold text-lg ${
+                code.active ? "text-green-700" : "text-red-500"
+              }">${code.id}</span>
+              <span class="text-sm text-gray-600">1 ponto</span>
+              <span class="text-xs px-2 py-1 rounded-full ${
+                code.active
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }">
+                ${code.active ? "Ativo" : "Inativo"}
+              </span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="window.toggleCodeStatus('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded ${
               code.active ? "btn-amber" : "btn-green"
             }">${code.active ? "Desativar" : "Ativar"}</button>
-            <button onclick="window.editCode('${
-              code.id
-            }')" class="text-xs px-3 py-1 rounded btn btn-prim">Editar</button>
-            <button onclick="window.deleteCode('${
-              code.id
-            }')" class="text-xs px-3 py-1 rounded btn btn-red">Excluir</button>
+              <button onclick="window.editCode('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded btn btn-prim">Editar</button>
+              <button onclick="window.deleteCode('${
+                code.id
+              }')" class="text-xs px-3 py-1 rounded btn btn-red">Excluir</button>
+            </div>
           </div>
-        </div>
-      `
+        `
           )
           .join("");
       }
@@ -745,49 +793,33 @@
         winnersTable.innerHTML = allWinners
           .map(
             (w) => `
-        <tr class="border-b last:border-0">
-          <td class="px-3 py-2">${w.name}</td>
-          <td class="px-3 py-2">${fmtPhone(w.phone)}</td>
-          <td class="px-3 py-2">${
-            w.createdAt?.toDate
-              ? w.createdAt.toDate().toLocaleString("pt-BR")
-              : "—"
-          }</td>
-          <td class="px-3 py-2">
-            ${
-              w.delivered
-                ? '<span class="text-green-700 bg-green-100 px-2 py-1 rounded text-xs">Entregue</span>'
-                : '<span class="text-amber-700 bg-amber-100 px-2 py-1 rounded text-xs">Pendente</span>'
-            }
-          </td>
-          <td class="px-3 py-2">
-            ${
-              w.delivered
-                ? ""
-                : `<button onclick="window.openDeliver('${w.id}','${w.cartelaId}')" class="px-3 py-1 rounded btn btn-green text-xs">Entregar prêmio</button>`
-            }
-          </td>
-        </tr>
-      `
+          <tr class="border-b last:border-0">
+            <td class="px-3 py-2">${w.name}</td>
+            <td class="px-3 py-2">${fmtPhone(w.phone)}</td>
+            <td class="px-3 py-2">${
+              w.createdAt?.toDate
+                ? w.createdAt.toDate().toLocaleString("pt-BR")
+                : "—"
+            }</td>
+            <td class="px-3 py-2">
+              ${
+                w.delivered
+                  ? '<span class="text-green-700 bg-green-100 px-2 py-1 rounded text-xs">Entregue</span>'
+                  : '<span class="text-amber-700 bg-amber-100 px-2 py-1 rounded text-xs">Pendente</span>'
+              }
+            </td>
+            <td class="px-3 py-2">
+              ${
+                w.delivered
+                  ? ""
+                  : `<button onclick="window.openDeliver('${w.id}','${w.cartelaId}')" class="px-3 py-1 rounded btn btn-green text-xs">Entregar prêmio</button>`
+              }
+            </td>
+          </tr>
+        `
           )
           .join("");
       }
-
-      /* --------- Firestore listeners --------- */
-      onSnapshot(cartelasColRef, (snap) => {
-        allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        if (!adminMode.classList.contains("hidden"))
-          renderAdminCartelas(allCartelas);
-      });
-      onSnapshot(codesColRef, (snap) => {
-        allCodes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        if (!adminMode.classList.contains("hidden"))
-          renderActiveCodes(allCodes);
-      });
-      onSnapshot(query(winnersColRef, orderBy("createdAt", "desc")), (snap) => {
-        allWinners = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        renderWinners();
-      });
 
       /* --------- Cartelas: ações --------- */
       document
@@ -820,7 +852,6 @@
         alert("✅ Cartão criado!");
       }
 
-      // evitar duplo clique no mesmo carimbo
       const stampingLock = new Set();
       async function toggleStamp(cartelaId, num) {
         const lockKey = `${cartelaId}:${num}`;
@@ -828,9 +859,7 @@
         stampingLock.add(lockKey);
         try {
           const c = allCartelas.find((x) => x.id === cartelaId);
-          if (!c || hasOpenWinner(c)) {
-            return;
-          } // travado se houver ganhador pendente
+          if (!c || hasOpenWinner(c)) return;
           const newStamped = (c.stamped || []).includes(num)
             ? (c.stamped || []).filter((n) => n !== num)
             : [...(c.stamped || []), num].sort((a, b) => a - b);
@@ -926,7 +955,6 @@
       document
         .getElementById("addCodeBtn")
         .addEventListener("click", addNewCode);
-
       async function addNewCode() {
         const raw = document.getElementById("newCode").value.trim();
         const code = raw.toUpperCase();
@@ -945,12 +973,9 @@
           alert("✅ Código criado!");
         } catch (e) {
           console.error(e);
-          alert(
-            "❌ Erro ao criar código (verifique Rules do Firestore para 'codes')."
-          );
+          alert("❌ Erro ao criar código (regras?).");
         }
       }
-
       async function toggleCodeStatus(codeId) {
         try {
           const ref = doc(db, "codes", codeId);
@@ -962,7 +987,6 @@
           alert("❌ Erro ao mudar status do código.");
         }
       }
-
       async function editCode(oldCode) {
         const n = prompt(`Editar código "${oldCode}"`, oldCode);
         if (n === null) return;
@@ -983,7 +1007,6 @@
           alert("❌ Erro ao renomear código.");
         }
       }
-
       async function deleteCode(codeId) {
         if (!confirm(`Excluir código ${codeId}?`)) return;
         try {
@@ -995,7 +1018,7 @@
         }
       }
 
-      /* --------- Winner flow (Entregar prêmio) --------- */
+      /* --------- Winner flow --------- */
       function openDeliver(winnerId, cartelaId) {
         deliverCtx = { winnerId, cartelaId };
         deliverDate.value = new Date().toISOString().slice(0, 16);
@@ -1007,52 +1030,55 @@
         deliverModal.classList.remove("flex");
         deliverCtx = null;
       }
-      deliverCancel.addEventListener("click", closeDeliver);
-
-      deliverConfirm.addEventListener("click", async () => {
-        if (!deliverCtx) return;
-        try {
-          const when = new Date(deliverDate.value);
-          await updateDoc(doc(db, "winners", deliverCtx.winnerId), {
-            delivered: true,
-            deliveredAt: when,
-          });
-          const cRef = doc(db, "cartelas", deliverCtx.cartelaId);
-          const cSnap = await getDoc(cRef);
-          if (cSnap.exists()) {
-            const w = cSnap.data().winner || {};
-            await updateDoc(cRef, {
-              winner: { ...w, delivered: true, deliveredAt: when },
+      document
+        .getElementById("deliverCancel")
+        .addEventListener("click", closeDeliver);
+      document
+        .getElementById("deliverConfirm")
+        .addEventListener("click", async () => {
+          if (!deliverCtx) return;
+          try {
+            const when = new Date(deliverDate.value);
+            await updateDoc(doc(db, "winners", deliverCtx.winnerId), {
+              delivered: true,
+              deliveredAt: when,
             });
+            const cRef = doc(db, "cartelas", deliverCtx.cartelaId);
+            const cSnap = await getDoc(cRef);
+            if (cSnap.exists()) {
+              const w = cSnap.data().winner || {};
+              await updateDoc(cRef, {
+                winner: { ...w, delivered: true, deliveredAt: when },
+              });
+            }
+            // Reset geral
+            const batchSize = 400;
+            for (let i = 0; i < allCartelas.length; i += batchSize) {
+              const slice = allCartelas.slice(i, i + batchSize);
+              const batch = writeBatch(db);
+              slice.forEach((c) =>
+                batch.update(doc(db, "cartelas", c.id), { stamped: [] })
+              );
+              await batch.commit();
+            }
+            for (const c of allCartelas) {
+              const usedRef = collection(db, "cartelas", c.id, "usedCodes");
+              const usedSnap = await getDocs(usedRef);
+              const batch = writeBatch(db);
+              usedSnap.forEach((d) =>
+                batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
+              );
+              await batch.commit();
+            }
+            alert("✅ Entrega confirmada e nova rodada iniciada!");
+            closeDeliver();
+          } catch (e) {
+            console.error(e);
+            alert("❌ Falha ao confirmar entrega (regras?).");
           }
-          // Reset geral
-          const batchSize = 400;
-          for (let i = 0; i < allCartelas.length; i += batchSize) {
-            const slice = allCartelas.slice(i, i + batchSize);
-            const batch = writeBatch(db);
-            slice.forEach((c) =>
-              batch.update(doc(db, "cartelas", c.id), { stamped: [] })
-            );
-            await batch.commit();
-          }
-          for (const c of allCartelas) {
-            const usedRef = collection(db, "cartelas", c.id, "usedCodes");
-            const usedSnap = await getDocs(usedRef);
-            const batch = writeBatch(db);
-            usedSnap.forEach((d) =>
-              batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
-            );
-            await batch.commit();
-          }
-          alert("✅ Entrega confirmada e nova rodada iniciada!");
-          closeDeliver();
-        } catch (e) {
-          console.error(e);
-          alert("❌ Falha ao confirmar entrega (regras?).");
-        }
-      });
+        });
 
-      // Expose
+      // Expose (para onclick inline)
       window.toggleStamp = toggleStamp;
       window.resetCartela = resetCartela;
       window.deleteCartela = deleteCartela;
@@ -1083,21 +1109,22 @@
       showLogin();
     </script>
 
-    <!-- DICA DE RULES (opcional): permitir writes do ADMIN por e-mail
-  rules_version = '2';
-  service cloud.firestore {
-    match /databases/{database}/documents {
-      function isAdmin() {
-        return request.auth != null && (
-          request.auth.token.email == 'admin@exemplo.com' || request.auth.token.email == 'voce@seu-dominio.com'
-        );
+    <!-- DICA DE RULES:
+      rules_version = '2';
+      service cloud.firestore {
+        match /databases/{database}/documents {
+          function isAdmin() {
+            return request.auth != null && (
+              request.auth.token.email == 'SEU-EMAIL@DOMINIO.COM'
+            );
+          }
+          match /codes/{id} { allow read: if true; allow write: if isAdmin(); }
+          match /settings/{doc} { allow read: if true; allow write: if isAdmin(); }
+          match /cartelas/{id} { allow read: if true; allow write: if isAdmin(); }
+          match /cartelas/{id}/usedCodes/{code} { allow read: if true; allow write: if isAdmin(); }
+          match /winners/{id} { allow read: if true; allow write: if isAdmin(); }
+        }
       }
-      match /codes/{id} { allow read: if true; allow write: if isAdmin(); }
-      match /settings/{doc} { allow read: if true; allow write: if isAdmin(); }
-      match /cartelas/{id} { allow read: if true; allow write: if isAdmin(); }
-      match /cartelas/{id}/usedCodes/{code} { allow read: if true; allow write: if isAdmin(); }
-      match /winners/{id} { allow read: if true; allow write: if isAdmin(); }
-    }
-  }
-  --></body>
+    -->
+  </body>
 </html>

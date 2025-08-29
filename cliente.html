@@ -130,12 +130,15 @@
               >
               e ganhe:
             </p>
+
+            <!-- TÍTULO DO PRÊMIO (DINÂMICO) -->
             <div
               class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-4 rounded-2xl text-3xl font-black shadow-lg"
             >
-              💰 R$ 50 VOUCHER IFOOD 💰
+              <span id="prizeTextClient">💰 R$ 50 VOUCHER IFOOD 💰</span>
             </div>
-            <p class="text-lg mt-4 opacity-90">
+            <!-- VALIDADE (DINÂMICA) -->
+            <p id="validTextClient" class="text-lg mt-4 opacity-90 hidden">
               🚀 Válido em qualquer restaurante do iFood!
             </p>
           </div>
@@ -147,8 +150,7 @@
         id="lockBanner"
         class="hidden mb-6 p-4 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 text-center font-medium"
       >
-        ⚠ Há um ganhador pendente. Nova pontuação será liberada após a entrega
-        do prêmio.
+        ⏳ Ganhador pendente — nova rodada em breve.
       </div>
 
       <!-- Regras -->
@@ -270,6 +272,21 @@
         } else alert("❌ Credenciais inválidas. Use: cliente / 123456");
       });
 
+      /* ===== PRÊMIO (tempo real) ===== */
+      const prizeTextClient = document.getElementById("prizeTextClient");
+      const validTextClient = document.getElementById("validTextClient");
+      onSnapshot(doc(db, "settings", "premioAtual"), (snap) => {
+        if (!snap.exists()) return;
+        const { premio, validade } = snap.data() || {};
+        if (premio) prizeTextClient.textContent = premio;
+        if (validade) {
+          validTextClient.textContent = `🚀 ${validade}`;
+          validTextClient.classList.remove("hidden");
+        } else {
+          validTextClient.classList.add("hidden");
+        }
+      });
+
       /* ===== Refs / Utils ===== */
       const cartelasGrid = document.getElementById("cartelasGrid");
       const cartelasColRef = collection(db, "cartelas");
@@ -310,54 +327,61 @@
           roundLocked || !c.active || (c.stamped?.length || 0) >= c.stamps;
 
         return `
-      <div class="cartela p-6 ${!c.active ? "opacity-60 border-red-300" : ""}">
-        <div class="text-center mb-4">
-          <div class="text-xl font-bold text-gray-800">👤 ${c.name}</div>
-          <div class="text-blue-600 font-semibold">📞 ${hidePhone(
-            c.phone
-          )}</div>
-          <div class="text-sm text-gray-600 mt-1">Pontos: ${
-            (c.stamped || []).length
-          }/${c.stamps} (${progress}%)</div>
-          <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
-        </div>
-
-        <div class="grid grid-cols-5 gap-3 justify-items-center mb-4">${stamps.join(
-          ""
-        )}</div>
-
-        ${
-          waitingDelivery
-            ? `
-          <div class="p-3 rounded bg-emerald-50 border border-emerald-200 text-center">
-            🎉 <b>CARTÃO GANHADOR!</b> Ganhou em: ${fmtDate(c.winner.at)}<br/>
-            <span class="text-emerald-700 text-sm">Aguardando entrega do prêmio.</span>
-          </div>`
-            : ""
-        }
-
-        ${
-          !inputDisabled
-            ? `
-          <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-            <div class="text-blue-700 font-medium text-center mb-2">Insira seu código (vale 1 ponto)</div>
-            <div class="flex gap-2">
-              <input id="code-${c.id}" placeholder="Código" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500">
-              <button onclick="window.submitCode('${c.id}')" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">Validar</button>
+          <div class="cartela p-6 ${
+            !c.active ? "opacity-60 border-red-300" : ""
+          }">
+            <div class="text-center mb-4">
+              <div class="text-xl font-bold text-gray-800">👤 ${c.name}</div>
+              <div class="text-blue-600 font-semibold">📞 ${hidePhone(
+                c.phone
+              )}</div>
+              <div class="text-sm text-gray-600 mt-1">Pontos: ${
+                (c.stamped || []).length
+              }/${c.stamps} (${progress}%)</div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
             </div>
-          </div>`
-            : `
-          <div class="p-3 bg-gray-50 border border-gray-200 rounded text-center text-gray-600 text-sm">
+
+            <div class="grid grid-cols-5 gap-3 justify-items-center mb-4">${stamps.join(
+              ""
+            )}</div>
+
             ${
-              roundLocked
-                ? "⏳ Ganhador pendente — nova rodada em breve."
-                : !c.active
-                ? "Cartão inativo."
-                : "Cartão completo!"
+              waitingDelivery
+                ? `
+              <div class="p-3 rounded bg-emerald-50 border border-emerald-200 text-center">
+                🎉 <b>CARTÃO GANHADOR!</b> Ganhou em: ${fmtDate(
+                  c.winner.at
+                )}<br/>
+                <span class="text-emerald-700 text-sm block mt-1">Aguardando entrega do prêmio.</span>
+                <span class="text-red-700 text-sm font-medium block mt-2">
+                  📞 Entre em contato com o administrador para retirar seu prêmio.
+                </span>
+              </div>`
+                : ""
             }
-          </div>`
-        }
-      </div>`;
+
+            ${
+              !inputDisabled
+                ? `
+              <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                <div class="text-blue-700 font-medium text-center mb-2">Insira seu código (vale 1 ponto)</div>
+                <div class="flex gap-2">
+                  <input id="code-${c.id}" placeholder="Código" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                  <button onclick="window.submitCode('${c.id}')" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">Validar</button>
+                </div>
+              </div>`
+                : `
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded text-center text-gray-600 text-sm">
+                ${
+                  roundLocked
+                    ? "⏳ Ganhador pendente — nova rodada em breve."
+                    : !c.active
+                    ? "Cartão inativo."
+                    : "Cartão completo!"
+                }
+              </div>`
+            }
+          </div>`;
       }
 
       function renderCartelas(list) {
@@ -387,21 +411,21 @@
         allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         renderCartelas(allCartelas);
       });
-      // trava global: winner pendente
       onSnapshot(
         query(winnersColRef, where("delivered", "==", false), limit(1)),
         (snap) => {
           roundLocked = !snap.empty;
-          lockBanner.classList.toggle("hidden", !roundLocked);
+          document
+            .getElementById("lockBanner")
+            .classList.toggle("hidden", !roundLocked);
           renderCartelas(allCartelas);
         }
       );
 
       /* ===== Validar código (TRANSACIONAL) ===== */
       async function submitCode(cartelaId) {
-        if (roundLocked) {
+        if (roundLocked)
           return alert("⏳ Há um ganhador pendente. Aguarde a próxima rodada.");
-        }
         const input = document.getElementById(`code-${cartelaId}`);
         const code = (input?.value || "").trim().toUpperCase();
         if (!code) return alert("❌ Digite um código.");
@@ -409,14 +433,12 @@
         try {
           let completedNow = false,
             customerName = "";
-
           await runTransaction(db, async (tx) => {
             const cartRef = doc(db, "cartelas", cartelaId);
             const cartSnap = await tx.get(cartRef);
             if (!cartSnap.exists()) throw new Error("cartela_nao_encontrada");
             const cart = cartSnap.data();
             customerName = cart.name;
-
             if (!cart.active) throw new Error("cartela_inativa");
             const current = cart.stamped || [];
             if (current.length >= cart.stamps)
@@ -432,7 +454,11 @@
             if (usedSnap.exists())
               throw new Error("codigo_ja_usado_neste_cartao");
 
-            const next = nextEmptyStamp(current, cart.stamps);
+            const next = (() => {
+              const set = new Set(current);
+              for (let i = 1; i <= cart.stamps; i++) if (!set.has(i)) return i;
+              return null;
+            })();
             if (!next) throw new Error("sem_espaco");
 
             const newStamped = [...current, next].sort((a, b) => a - b);
@@ -494,21 +520,10 @@
         renderCartelas(allCartelas);
       }
 
-      /* Expose */
+      // expose
       window.submitCode = submitCode;
       window.filterCartelas = filterCartelas;
       window.clearSearch = clearSearch;
     </script>
   </body>
-  <!-- Footer -->
-  <footer class="bg-white border-t mt-10">
-    <div
-      class="container mx-auto px-6 py-5 flex items-center justify-between text-sm text-gray-600"
-    >
-      <span>© <span id="yearNow"></span> — Todos os direitos reservados.</span>
-      <button id="openPrivacy" class="text-blue-600 hover:underline">
-        Termo de Privacidade
-      </button>
-    </div>
-  </footer>
 </html>

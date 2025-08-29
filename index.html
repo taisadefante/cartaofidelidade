@@ -71,7 +71,6 @@
           </a>
           <a
             href="admin.html"
-            onclick="window.location.href='./admin.html'; return false;"
             class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
             🔐 Admin
@@ -80,7 +79,7 @@
       </div>
     </header>
 
-    <!-- Welcome Screen (mesmo layout do seu código) -->
+    <!-- Welcome Screen -->
     <div id="welcomeScreen" class="container mx-auto p-6">
       <div
         class="bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 rounded-2xl p-8 mb-8 text-white shadow-2xl relative overflow-hidden"
@@ -122,82 +121,90 @@
               </div>
             </div>
           </div>
-          <div
-            class="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-6 text-center"
-          >
-            <div class="text-2xl font-bold mb-2">🚀 COMECE AGORA MESMO!</div>
-            <div class="text-lg">
-              Faça login e comece a colecionar seus pontos!
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div
-        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
-      >
-        <div class="text-center">
-          <div class="text-6xl mb-6 animate-bounce">🎯🏆</div>
-          <h2 class="text-5xl font-black mb-6 animate-pulse">
-            TROQUE CÓDIGOS POR PONTOS!
-          </h2>
-          <div class="bg-white bg-opacity-20 rounded-xl p-8 backdrop-blur-sm">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <!-- BLOCO DO PRÊMIO (dinâmico) -->
+          <div
+            class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
+          >
+            <div class="text-center">
               <div
-                class="bg-gradient-to-b from-yellow-400 to-orange-500 text-black p-6 rounded-2xl shadow-lg"
+                class="bg-white bg-opacity-20 rounded-xl p-8 backdrop-blur-sm"
               >
-                <div class="text-4xl mb-3">🔢</div>
-                <h3 class="text-xl font-bold mb-2">DIGITE CÓDIGOS</h3>
-                <p class="text-sm">
-                  Insira códigos especiais e ganhe pontos instantaneamente!
+                <!-- cards explicativos -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div
+                    class="bg-gradient-to-b from-yellow-400 to-orange-500 text-black p-6 rounded-2xl shadow-lg"
+                  >
+                    <div class="text-4xl mb-3">🔢</div>
+                    <h3 class="text-xl font-bold mb-2">DIGITE CÓDIGOS</h3>
+                    <p class="text-sm">
+                      Insira códigos especiais e ganhe pontos instantaneamente!
+                    </p>
+                  </div>
+                  <div
+                    class="bg-gradient-to-b from-green-400 to-emerald-500 text-black p-6 rounded-2xl shadow-lg"
+                  >
+                    <div class="text-4xl mb-3">⭐</div>
+                    <h3 class="text-xl font-bold mb-2">ACUMULE PONTOS</h3>
+                    <p class="text-sm">
+                      Cada código vale 1 ponto. Colete 10 pontos para concorrer!
+                    </p>
+                  </div>
+                  <div
+                    class="bg-gradient-to-b from-purple-400 to-pink-500 text-black p-6 rounded-2xl shadow-lg"
+                  >
+                    <div class="text-4xl mb-3">🎁</div>
+                    <h3 class="text-xl font-bold mb-2">GANHE PRÊMIOS</h3>
+                    <p class="text-sm">
+                      Complete 10 pontos e troque pelo prêmio!
+                    </p>
+                  </div>
+                </div>
+
+                <!-- título do prêmio -->
+                <div
+                  class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-6 rounded-2xl text-4xl font-black shadow-lg mb-2"
+                >
+                  <span id="prizeText">💰 PRÊMIO: R$ 50 VOUCHER IFOOD 💰</span>
+                </div>
+
+                <!-- validade (pílula) -->
+                <div class="w-full flex justify-center mb-6">
+                  <span
+                    id="validText"
+                    class="hidden inline-flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-lg bg-black/10 text-black/80"
+                  >
+                    🏷️ <span>Válido em qualquer restaurante do iFood!</span>
+                  </span>
+                </div>
+
+                <div class="bg-red-600 bg-opacity-80 rounded-2xl p-4 mb-4">
+                  <h3 class="text-2xl font-bold mb-2">⚡ REGRA ESPECIAL ⚡</h3>
+                  <p class="text-lg">
+                    Quando alguém completar 10 pontos primeiro, TODOS os cartões
+                    são zerados e uma nova rodada começa!
+                  </p>
+                </div>
+
+                <p class="text-2xl font-semibold">
+                  🚀 Faça login e comece a concorrer agora!
                 </p>
+                <div class="flex justify-center gap-4 mt-6">
+                  <a
+                    href="cliente.html"
+                    class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    👤 ENTRAR COMO CLIENTE
+                  </a>
+                </div>
               </div>
-              <div
-                class="bg-gradient-to-b from-green-400 to-emerald-500 text-black p-6 rounded-2xl shadow-lg"
-              >
-                <div class="text-4xl mb-3">⭐</div>
-                <h3 class="text-xl font-bold mb-2">ACUMULE PONTOS</h3>
-                <p class="text-sm">
-                  Cada código vale 1 ponto. Colete 10 pontos para concorrer!
-                </p>
-              </div>
-              <div
-                class="bg-gradient-to-b from-purple-400 to-pink-500 text-black p-6 rounded-2xl shadow-lg"
-              >
-                <div class="text-4xl mb-3">🎁</div>
-                <h3 class="text-xl font-bold mb-2">GANHE PRÊMIOS</h3>
-                <p class="text-sm">
-                  Complete 10 pontos e ganhe R$ 50 no iFood!
-                </p>
-              </div>
-            </div>
-            <div
-              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-6 rounded-2xl text-4xl font-black shadow-lg mb-6"
-            >
-              💰 PRÊMIO: R$ 50 VOUCHER IFOOD 💰
-            </div>
-            <div class="bg-red-600 bg-opacity-80 rounded-2xl p-4 mb-4">
-              <h3 class="text-2xl font-bold mb-2">⚡ REGRA ESPECIAL ⚡</h3>
-              <p class="text-lg">
-                Quando alguém completar 10 pontos primeiro, TODOS os cartões são
-                zerados e uma nova rodada começa!
-              </p>
-            </div>
-            <p class="text-2xl font-semibold">
-              🚀 Faça login e comece a concorrer agora!
-            </p>
-            <div class="flex justify-center gap-4 mt-6">
-              <a
-                href="cliente.html"
-                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg"
-              >
-                👤 ENTRAR COMO CLIENTE
-              </a>
             </div>
           </div>
+          <!-- /BLOCO DO PRÊMIO -->
         </div>
       </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-white border-t mt-10">
       <div
@@ -206,10 +213,60 @@
         <span
           >© <span id="yearNow"></span> — Todos os direitos reservados.</span
         >
-        <button id="openPrivacy" class="text-blue-600 hover:underline">
-          Termo de Privacidade
-        </button>
+        <a href="admin.html" class="text-blue-600 hover:underline"
+          >Área do administrador</a
+        >
       </div>
     </footer>
+
+    <!-- Firebase: leitura do prêmio em tempo real -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB7UcJxEJHffsvCI_Y9Uylwy943RxBSIEA",
+        authDomain: "banco-e3302.firebaseapp.com",
+        projectId: "banco-e3302",
+        storageBucket: "banco-e3302.firebasestorage.app",
+        messagingSenderId: "669890747472",
+        appId: "1:669890747472:web:b3188add68fffb010f0555",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // UI refs
+      const prizeEl = document.getElementById("prizeText");
+      const validEl = document.getElementById("validText");
+
+      // Atualiza ano no rodapé
+      const yearNow = document.getElementById("yearNow");
+      if (yearNow) yearNow.textContent = new Date().getFullYear();
+
+      // Lê o documento salvo no admin: settings/premioAtual
+      const prizeRef = doc(db, "settings", "premioAtual");
+      onSnapshot(prizeRef, (snap) => {
+        if (!snap.exists()) return;
+        const { premio, validade } = snap.data() || {};
+
+        if (premio && prizeEl) {
+          prizeEl.textContent = premio; // mantém emojis se vierem do admin
+        }
+
+        if (validade && validEl) {
+          validEl.classList.remove("hidden");
+          // o último span dentro da pílula é o texto
+          const textSpan = validEl.querySelector("span:last-child");
+          if (textSpan) textSpan.textContent = validade;
+        } else if (validEl) {
+          validEl.classList.add("hidden");
+        }
+      });
+    </script>
   </body>
 </html>
