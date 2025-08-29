@@ -2,7 +2,10 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
     <title>Sistema de Cartão Fidelidade — Cliente</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -33,6 +36,17 @@
         box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15),
           0 5px 15px rgba(0, 0, 0, 0.08);
       }
+      @media (max-width: 480px) {
+        .stamp-circle {
+          width: 38px;
+          height: 38px;
+          font-size: 12px;
+          border-width: 2px;
+        }
+        .cartela {
+          border-width: 2px;
+        }
+      }
     </style>
   </head>
   <body
@@ -40,17 +54,19 @@
   >
     <!-- Header -->
     <header
-      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white p-6 shadow-2xl"
+      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white py-4 sm:py-6 shadow-2xl"
     >
-      <div class="container mx-auto flex justify-between items-center">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+      >
         <h1
-          class="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
+          class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
         >
           💳 Sistema de Cartão Fidelidade ✨
         </h1>
         <a
           href="index.html"
-          class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg"
+          class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-center w-full sm:w-auto"
           >🏠 Início</a
         >
       </div>
@@ -61,8 +77,12 @@
       id="userLoginModal"
       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-8 rounded-xl shadow-2xl w-96">
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+      <div
+        class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-[min(380px,92vw)]"
+      >
+        <h2
+          class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-gray-800"
+        >
           👤 Login Cliente
         </h2>
         <div class="space-y-4">
@@ -87,7 +107,7 @@
               placeholder="123456"
             />
           </div>
-          <div class="flex gap-3">
+          <div class="flex flex-col sm:flex-row gap-3">
             <button
               id="userLoginBtn2"
               class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium"
@@ -100,7 +120,7 @@
               >Cancelar</a
             >
           </div>
-          <p class="mt-3 text-xs text-gray-500 text-center">
+          <p class="mt-1 text-xs text-gray-500 text-center">
             Demo: cliente / 123456
           </p>
         </div>
@@ -108,21 +128,24 @@
     </div>
 
     <!-- VIEW -->
-    <div id="viewMode" class="container mx-auto p-6 hidden">
+    <div
+      id="viewMode"
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 hidden"
+    >
       <!-- Destaque -->
       <div
-        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
+        class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-5 sm:p-8 mb-8 text-white shadow-2xl"
       >
         <div class="text-center">
-          <div class="text-5xl mb-4">🍔🎉</div>
-          <h2 class="text-4xl font-bold mb-4 animate-pulse">
+          <div class="text-4xl sm:text-5xl mb-3 sm:mb-4">🍔🎉</div>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 animate-pulse">
             PRÊMIO ESPECIAL!
           </h2>
-          <div class="bg-white bg-opacity-20 rounded-xl p-6 backdrop-blur-sm">
-            <p class="text-2xl font-semibold mb-2">
+          <div class="bg-white/20 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
+            <p class="text-xl sm:text-2xl font-semibold mb-2">
               Complete seu Cartão Fidelidade
             </p>
-            <p class="text-xl mb-4">
+            <p class="text-lg sm:text-xl mb-4">
               Colete
               <span
                 class="bg-yellow-400 text-black px-3 py-1 rounded-full font-bold"
@@ -130,15 +153,17 @@
               >
               e ganhe:
             </p>
-
             <!-- TÍTULO DO PRÊMIO (DINÂMICO) -->
             <div
-              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-8 py-4 rounded-2xl text-3xl font-black shadow-lg"
+              class="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 sm:px-8 py-3 sm:py-4 rounded-2xl text-2xl sm:text-3xl font-black shadow-lg"
             >
               <span id="prizeTextClient">💰 R$ 50 VOUCHER IFOOD 💰</span>
             </div>
             <!-- VALIDADE (DINÂMICA) -->
-            <p id="validTextClient" class="text-lg mt-4 opacity-90 hidden">
+            <p
+              id="validTextClient"
+              class="text-base sm:text-lg mt-3 sm:mt-4 opacity-90 hidden"
+            >
               🚀 Válido em qualquer restaurante do iFood!
             </p>
           </div>
@@ -155,33 +180,35 @@
 
       <!-- Regras -->
       <div
-        class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-100 border-2 border-orange-400 rounded-2xl p-6 mb-8 shadow-lg"
+        class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-100 border-2 border-orange-400 rounded-2xl p-5 sm:p-6 mb-8 shadow-lg"
       >
         <div class="text-center">
-          <h3 class="text-2xl font-bold text-orange-800 mb-4">
+          <h3
+            class="text-xl sm:text-2xl font-bold text-orange-800 mb-3 sm:mb-4"
+          >
             ⚠ REGRAS IMPORTANTES ⚠
           </h3>
-          <div class="bg-white bg-opacity-70 rounded-xl p-4 backdrop-blur-sm">
-            <div class="text-lg font-semibold text-red-700 mb-2">
+          <div class="bg-white/70 rounded-xl p-4 backdrop-blur-sm">
+            <div class="text-base sm:text-lg font-semibold text-red-700 mb-2">
               🔢 Cada código vale apenas
               <span class="bg-red-200 px-2 py-1 rounded font-bold"
                 >1 PONTO</span
               >
             </div>
-            <div class="text-lg font-semibold text-orange-700">
+            <div class="text-base sm:text-lg font-semibold text-orange-700">
               🏆 Quem completar
               <span class="bg-yellow-300 px-2 py-1 rounded font-bold"
                 >10 PONTOS</span
               >
               primeiro,
             </div>
-            <div class="text-lg font-bold text-red-800 mt-2">
+            <div class="text-base sm:text-lg font-bold text-red-800 mt-2">
               🔄
               <span class="bg-red-300 px-3 py-1 rounded"
                 >ZERARÁ TODOS OS CARTÕES</span
               >
             </div>
-            <div class="text-base text-gray-700 mt-3">
+            <div class="text-sm sm:text-base text-gray-700 mt-3">
               ✨ Uma nova rodada começará automaticamente após a entrega do
               prêmio.
             </div>
@@ -191,23 +218,25 @@
 
       <!-- Busca -->
       <div
-        class="bg-white rounded-2xl p-6 mb-8 shadow-lg border-2 border-blue-200"
+        class="bg-white rounded-2xl p-5 sm:p-6 mb-8 shadow-lg border-2 border-blue-200"
       >
-        <h3 class="text-2xl font-bold text-center mb-4 text-gray-800">
+        <h3
+          class="text-xl sm:text-2xl font-bold text-center mb-4 text-gray-800"
+        >
           🔍 Buscar Cartão
         </h3>
-        <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex flex-col md:flex-row gap-3 sm:gap-4">
           <div class="flex-1">
             <input
               id="searchInput"
               placeholder="Digite o nome ou telefone do cliente..."
-              class="w-full p-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+              class="w-full p-3 sm:p-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base sm:text-lg"
               oninput="window.filterCartelas()"
             />
           </div>
           <button
             onclick="window.clearSearch()"
-            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl font-semibold"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-5 sm:px-6 py-3 sm:py-4 rounded-xl font-semibold"
           >
             🗑 Limpar
           </button>
@@ -218,14 +247,74 @@
         ></div>
       </div>
 
-      <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">
+      <h2
+        class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800"
+      >
         💳 Cartões Fidelidade
       </h2>
       <div
         id="cartelasGrid"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
       ></div>
     </div>
+
+    <!-- Modal Privacidade -->
+    <div
+      id="privacyModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[60]"
+    >
+      <div class="bg-white w-[min(720px,94vw)] p-6 rounded-xl shadow-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">Termo de Privacidade</h3>
+          <button
+            id="closePrivacy"
+            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+          >
+            Fechar
+          </button>
+        </div>
+        <div class="text-sm text-gray-700 space-y-3">
+          <p>
+            Coletamos e usamos apenas os dados necessários para operar o
+            programa de fidelidade.
+          </p>
+          <p>
+            Você pode solicitar correção ou exclusão do seu cartão a qualquer
+            momento.
+          </p>
+          <p>
+            Os dados são armazenados com segurança no Firebase (Google Cloud).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-10 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div class="text-center text-sm text-gray-600">
+          © <span id="yearNow"></span> — Todos os direitos reservados.
+        </div>
+        <div class="text-center mt-1">
+          <button
+            id="openPrivacy"
+            class="text-blue-500 hover:underline text-sm"
+          >
+            Termo de Privacidade
+          </button>
+        </div>
+      </div>
+      <div class="absolute bottom-2 right-4 text-xs text-gray-400">
+        desenvolvido por
+        <a
+          href="https://defan.com.br"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-blue-500 transition-colors"
+          >Defan Soluções Digitais</a
+        >
+      </div>
+    </footer>
 
     <!-- Firebase / App -->
     <script type="module">
@@ -290,7 +379,6 @@
       /* ===== Refs / Utils ===== */
       const cartelasGrid = document.getElementById("cartelasGrid");
       const cartelasColRef = collection(db, "cartelas");
-      const codesColRef = collection(db, "codes");
       const winnersColRef = collection(db, "winners");
       const lockBanner = document.getElementById("lockBanner");
 
@@ -304,11 +392,6 @@
           : ts instanceof Date
           ? ts.toLocaleString("pt-BR")
           : "";
-      function nextEmptyStamp(stamped = [], stamps = 10) {
-        const set = new Set(stamped);
-        for (let i = 1; i <= stamps; i++) if (!set.has(i)) return i;
-        return null;
-      }
 
       /* ===== Render ===== */
       function createCartelaHTML(c) {
@@ -327,11 +410,13 @@
           roundLocked || !c.active || (c.stamped?.length || 0) >= c.stamps;
 
         return `
-          <div class="cartela p-6 ${
+          <div class="cartela p-4 sm:p-6 ${
             !c.active ? "opacity-60 border-red-300" : ""
           }">
             <div class="text-center mb-4">
-              <div class="text-xl font-bold text-gray-800">👤 ${c.name}</div>
+              <div class="text-lg sm:text-xl font-bold text-gray-800">👤 ${
+                c.name
+              }</div>
               <div class="text-blue-600 font-semibold">📞 ${hidePhone(
                 c.phone
               )}</div>
@@ -341,45 +426,40 @@
               <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
             </div>
 
-            <div class="grid grid-cols-5 gap-3 justify-items-center mb-4">${stamps.join(
+            <div class="grid grid-cols-5 gap-2 sm:gap-3 justify-items-center mb-4">${stamps.join(
               ""
             )}</div>
 
             ${
               waitingDelivery
-                ? `
-              <div class="p-3 rounded bg-emerald-50 border border-emerald-200 text-center">
-                🎉 <b>CARTÃO GANHADOR!</b> Ganhou em: ${fmtDate(
-                  c.winner.at
-                )}<br/>
-                <span class="text-emerald-700 text-sm block mt-1">Aguardando entrega do prêmio.</span>
-                <span class="text-red-700 text-sm font-medium block mt-2">
-                  📞 Entre em contato com o administrador para retirar seu prêmio.
-                </span>
-              </div>`
+                ? `<div class="p-3 rounded bg-emerald-50 border border-emerald-200 text-center">
+                    🎉 <b>CARTÃO GANHADOR!</b> Ganhou em: ${fmtDate(
+                      c.winner.at
+                    )}<br/>
+                    <span class="text-emerald-700 text-sm block mt-1">Aguardando entrega do prêmio.</span>
+                    <span class="text-red-700 text-sm font-medium block mt-2">📞 Entre em contato com o administrador para retirar seu prêmio.</span>
+                   </div>`
                 : ""
             }
 
             ${
               !inputDisabled
-                ? `
-              <div class="p-3 bg-blue-50 border border-blue-200 rounded">
-                <div class="text-blue-700 font-medium text-center mb-2">Insira seu código (vale 1 ponto)</div>
-                <div class="flex gap-2">
-                  <input id="code-${c.id}" placeholder="Código" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500">
-                  <button onclick="window.submitCode('${c.id}')" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">Validar</button>
-                </div>
-              </div>`
-                : `
-              <div class="p-3 bg-gray-50 border border-gray-200 rounded text-center text-gray-600 text-sm">
-                ${
-                  roundLocked
-                    ? "⏳ Ganhador pendente — nova rodada em breve."
-                    : !c.active
-                    ? "Cartão inativo."
-                    : "Cartão completo!"
-                }
-              </div>`
+                ? `<div class="p-3 bg-blue-50 border border-blue-200 rounded">
+                    <div class="text-blue-700 font-medium text-center mb-2">Insira seu código (vale 1 ponto)</div>
+                    <div class="flex gap-2">
+                      <input id="code-${c.id}" placeholder="Código" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                      <button onclick="window.submitCode('${c.id}')" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">Validar</button>
+                    </div>
+                   </div>`
+                : `<div class="p-3 bg-gray-50 border border-gray-200 rounded text-center text-gray-600 text-sm">
+                    ${
+                      roundLocked
+                        ? "⏳ Ganhador pendente — nova rodada em breve."
+                        : !c.active
+                        ? "Cartão inativo."
+                        : "Cartão completo!"
+                    }
+                   </div>`
             }
           </div>`;
       }
@@ -392,7 +472,8 @@
         const src = term
           ? active.filter(
               (c) =>
-                c.name.toLowerCase().includes(term) || c.phone.includes(term)
+                c.name.toLowerCase().includes(term) ||
+                (c.phone || "").includes(term)
             )
           : active;
         cartelasGrid.innerHTML = src.map(createCartelaHTML).join("");
@@ -407,12 +488,16 @@
       }
 
       /* ===== Snapshots ===== */
-      onSnapshot(cartelasColRef, (snap) => {
+      onSnapshot(collection(db, "cartelas"), (snap) => {
         allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         renderCartelas(allCartelas);
       });
       onSnapshot(
-        query(winnersColRef, where("delivered", "==", false), limit(1)),
+        query(
+          collection(db, "winners"),
+          where("delivered", "==", false),
+          limit(1)
+        ),
         (snap) => {
           roundLocked = !snap.empty;
           document
@@ -454,11 +539,15 @@
             if (usedSnap.exists())
               throw new Error("codigo_ja_usado_neste_cartao");
 
-            const next = (() => {
-              const set = new Set(current);
-              for (let i = 1; i <= cart.stamps; i++) if (!set.has(i)) return i;
-              return null;
-            })();
+            // próximo carimbo
+            const set = new Set(current);
+            let next = null;
+            for (let i = 1; i <= cart.stamps; i++) {
+              if (!set.has(i)) {
+                next = i;
+                break;
+              }
+            }
             if (!next) throw new Error("sem_espaco");
 
             const newStamped = [...current, next].sort((a, b) => a - b);
@@ -524,6 +613,27 @@
       window.submitCode = submitCode;
       window.filterCartelas = filterCartelas;
       window.clearSearch = clearSearch;
+
+      // Footer: ano + modal privacidade
+      const yearNow = document.getElementById("yearNow");
+      if (yearNow) yearNow.textContent = new Date().getFullYear();
+      const openPrivacy = document.getElementById("openPrivacy");
+      const privacyModal = document.getElementById("privacyModal");
+      const closePrivacy = document.getElementById("closePrivacy");
+      openPrivacy?.addEventListener("click", () => {
+        privacyModal.classList.remove("hidden");
+        privacyModal.classList.add("flex");
+      });
+      closePrivacy?.addEventListener("click", () => {
+        privacyModal.classList.add("hidden");
+        privacyModal.classList.remove("flex");
+      });
+      privacyModal?.addEventListener("click", (e) => {
+        if (e.target === privacyModal) {
+          privacyModal.classList.add("hidden");
+          privacyModal.classList.remove("flex");
+        }
+      });
     </script>
   </body>
 </html>

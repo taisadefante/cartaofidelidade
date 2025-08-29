@@ -27,6 +27,10 @@
         color: #fff;
         box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
       }
+      .stamp-circle:hover {
+        transform: scale(1.08);
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.28);
+      }
       .cartela {
         background: linear-gradient(135deg, #fff 0%, #f8fafc 50%, #e2e8f0 100%);
         border: 3px solid #3b82f6;
@@ -83,6 +87,19 @@
       .btn-amber:hover {
         background: #d97706;
       }
+
+      /* Responsividade extra para telas muito pequenas */
+      @media (max-width: 480px) {
+        .stamp-circle {
+          width: 38px;
+          height: 38px;
+          font-size: 12px;
+          border-width: 2px;
+        }
+        .cartela {
+          border-width: 2px;
+        }
+      }
     </style>
   </head>
   <body
@@ -90,23 +107,27 @@
   >
     <!-- Header -->
     <header
-      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white p-6 shadow-2xl"
+      class="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white py-4 sm:py-6 shadow-2xl"
     >
-      <div class="container mx-auto flex justify-between items-center">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+      >
         <h1
-          class="text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
+          class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
         >
           💳 Sistema de Cartão Fidelidade ✨ — Admin
         </h1>
-        <div class="flex gap-3 items-center">
+        <div class="flex flex-wrap gap-2 sm:gap-3 items-center">
           <span
             id="adminBadge"
-            class="hidden text-sm bg-white/10 px-3 py-1 rounded-full"
+            class="hidden text-xs sm:text-sm bg-white/10 px-3 py-1 rounded-full"
           ></span>
-          <button id="winnersBtn" class="hidden btn btn-amber">
+          <button id="winnersBtn" class="hidden btn btn-amber text-sm">
             👑 Ganhadores
           </button>
-          <button id="logoutBtn" class="hidden btn btn-gray">🚪 Sair</button>
+          <button id="logoutBtn" class="hidden btn btn-gray text-sm">
+            🚪 Sair
+          </button>
         </div>
       </div>
     </header>
@@ -116,8 +137,12 @@
       id="adminLoginModal"
       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-8 rounded-xl shadow-2xl w-[420px]">
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+      <div
+        class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-[min(420px,92vw)]"
+      >
+        <h2
+          class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-gray-800"
+        >
           🔐 Login Administrador
         </h2>
         <div class="space-y-4">
@@ -158,8 +183,10 @@
       class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[60]"
     >
       <div class="bg-white w-[min(900px,92vw)] rounded-xl shadow-2xl">
-        <div class="px-6 py-4 border-b flex items-center justify-between">
-          <h3 class="text-xl font-semibold">👑 Ganhadores</h3>
+        <div
+          class="px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between"
+        >
+          <h3 class="text-lg sm:text-xl font-semibold">👑 Ganhadores</h3>
           <button
             id="closeWinners"
             class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
@@ -167,8 +194,8 @@
             Fechar
           </button>
         </div>
-        <div class="p-6 overflow-x-auto">
-          <table class="w-full text-sm">
+        <div class="p-4 sm:p-6 overflow-x-auto">
+          <table class="w-full text-xs sm:text-sm">
             <thead class="bg-gray-50">
               <tr class="text-left">
                 <th class="px-3 py-2">Nome</th>
@@ -214,19 +241,23 @@
 
     <!-- Painel -->
     <main id="adminMode" class="hidden">
-      <div class="admin-panel text-white p-6">
-        <div class="container mx-auto">
-          <h2 class="text-3xl font-bold mb-6">⚙ Painel Administrativo</h2>
+      <div class="admin-panel text-white py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 class="text-2xl sm:text-3xl font-bold mb-6">
+            ⚙ Painel Administrativo
+          </h2>
 
-          <!-- PRÊMIO ATUAL (APENAS 2 INPUTS) -->
-          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-bold">
+          <!-- PRÊMIO ATUAL -->
+          <div class="bg-white text-gray-800 p-5 sm:p-6 rounded-xl mb-6">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4"
+            >
+              <h3 class="text-lg sm:text-xl font-bold">
                 🏆 Prêmio Atual (exibido para o cliente)
               </h3>
               <span id="prizeSavedAt" class="text-xs text-gray-500"></span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               <input
                 id="premioInput"
                 class="p-3 border rounded-lg"
@@ -237,7 +268,7 @@
                 class="p-3 border rounded-lg"
                 placeholder="✅ Válido em qualquer restaurante do iFood!"
               />
-              <button id="savePrizeBtn" class="btn btn-green">
+              <button id="savePrizeBtn" class="btn btn-green w-full md:w-auto">
                 💾 Salvar Prêmio
               </button>
             </div>
@@ -247,9 +278,11 @@
           </div>
 
           <!-- Gerenciar Códigos -->
-          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
-            <h3 class="text-xl font-bold mb-4">🔑 Gerenciar Códigos</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div class="bg-white text-gray-800 p-5 sm:p-6 rounded-xl mb-6">
+            <h3 class="text-lg sm:text-xl font-bold mb-4">
+              🔑 Gerenciar Códigos
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
               <input
                 id="newCode"
                 type="text"
@@ -265,7 +298,9 @@
                 readonly
                 class="p-3 border rounded-lg"
               />
-              <button id="addCodeBtn" class="btn btn-prim">Criar Código</button>
+              <button id="addCodeBtn" class="btn btn-prim w-full md:w-auto">
+                Criar Código
+              </button>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <h4 class="font-semibold mb-2">📝 Códigos Ativos</h4>
@@ -274,11 +309,13 @@
           </div>
 
           <!-- Novo Cartão -->
-          <div class="bg-white text-gray-800 p-6 rounded-xl mb-6">
+          <div class="bg-white text-gray-800 p-5 sm:p-6 rounded-xl mb-6">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-bold">➕ Novo Cartão Fidelidade</h3>
+              <h3 class="text-lg sm:text-xl font-bold">
+                ➕ Novo Cartão Fidelidade
+              </h3>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-3 sm:gap-4">
               <input
                 id="newName"
                 type="text"
@@ -300,46 +337,78 @@
                 readonly
                 class="p-3 border rounded-lg"
               />
-              <button id="addCartelaBtn" class="btn btn-green">➕ Criar</button>
-              <button id="blockAllCardsBtn" class="btn btn-amber">
+              <button id="addCartelaBtn" class="btn btn-green w-full md:w-auto">
+                ➕ Criar
+              </button>
+              <button
+                id="blockAllCardsBtn"
+                class="btn btn-amber w-full md:w-auto"
+              >
                 🔒 Bloquear Todos
               </button>
-              <button id="deleteAllCardsBtn" class="btn btn-red">
+              <button
+                id="deleteAllCardsBtn"
+                class="btn btn-red w-full md:w-auto"
+              >
                 🗑 Excluir Todos
               </button>
             </div>
           </div>
 
           <!-- Gerenciar Cartões -->
-          <div class="bg-white text-gray-800 p-6 rounded-xl">
-            <div class="flex items-center justify-between gap-3">
-              <h3 class="text-xl font-bold">📋 Gerenciar Cartões</h3>
-              <input
-                id="searchCards"
-                placeholder="Buscar por nome ou telefone…"
-                class="p-2 border rounded-lg flex-1 max-w-sm"
-              />
-              <button id="openWinnersTop" class="btn btn-amber">
-                👑 Ganhadores
-              </button>
+          <div class="bg-white text-gray-800 p-5 sm:p-6 rounded-xl">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            >
+              <h3 class="text-lg sm:text-xl font-bold">📋 Gerenciar Cartões</h3>
+              <div class="flex gap-3 items-center">
+                <input
+                  id="searchCards"
+                  placeholder="Buscar por nome ou telefone…"
+                  class="p-2 border rounded-lg w-full sm:w-64"
+                />
+                <button id="openWinnersTop" class="btn btn-amber">
+                  👑 Ganhadores
+                </button>
+              </div>
             </div>
-            <div id="adminCartelasGrid" class="mt-4 space-y-4"></div>
+            <div
+              id="adminCartelasGrid"
+              class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4"
+            ></div>
           </div>
         </div>
       </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t mt-10">
-      <div
-        class="container mx-auto px-6 py-5 flex items-center justify-between text-sm text-gray-600"
-      >
-        <span
-          >© <span id="yearNow"></span> — Todos os direitos reservados.</span
+    <footer class="bg-white border-t mt-10 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <!-- Direitos -->
+        <div class="text-center text-sm text-gray-600">
+          © <span id="yearNow"></span> — Todos os direitos reservados.
+        </div>
+        <!-- Termos -->
+        <div class="text-center mt-1">
+          <button
+            id="openPrivacy"
+            class="text-blue-500 hover:underline text-sm"
+          >
+            Termo de Privacidade
+          </button>
+        </div>
+      </div>
+      <!-- Desenvolvimento canto direito -->
+      <div class="absolute bottom-2 right-4 text-xs text-gray-400">
+        desenvolvido por
+        <a
+          href="https://defan.com.br"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-blue-500 transition-colors"
         >
-        <button id="openPrivacy" class="text-blue-600 hover:underline">
-          Termo de Privacidade
-        </button>
+          Defan Soluções Digitais
+        </a>
       </div>
     </footer>
 
@@ -605,7 +674,7 @@
         renderWinners();
       }
 
-      /* --------- PRÊMIO (apenas 2 campos) --------- */
+      /* --------- PRÊMIO --------- */
       savePrizeBtn.addEventListener("click", async () => {
         const premio = (premioInput.value || "").trim();
         const validade = (validadeInput.value || "").trim();
@@ -659,35 +728,35 @@
           : "";
 
         return `
-          <div class="cartela p-6 ${
+          <div class="cartela p-4 sm:p-6 ${
             !cartela.active ? "opacity-60 border-red-300" : ""
           }">
             <div class="text-center mb-4">
-              <div class="flex items-center justify-center gap-2 mb-1">
-                <div class="text-xl font-bold text-gray-800">👤 ${
+              <div class="flex flex-wrap items-center justify-center gap-2 mb-1">
+                <div class="text-lg sm:text-xl font-bold text-gray-800">👤 ${
                   cartela.name
                 }</div>
                 <span class="text-xs px-2 py-1 rounded-full ${
                   cartela.active
                     ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
-                }">
-                  ${cartela.active ? "Ativo" : "Inativo"}
-                </span>
+                }">${cartela.active ? "Ativo" : "Inativo"}</span>
               </div>
-              <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${fmtPhone(
+              <div class="text-base sm:text-lg font-semibold text-blue-600 mb-2">📞 ${fmtPhone(
                 cartela.phone
               )}</div>
               <div class="text-sm text-gray-600">Pontos: ${
                 (cartela.stamped || []).length
               }/${cartela.stamps} (${progress}%)</div>
-              <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div>
+              </div>
             </div>
-            <div class="grid grid-cols-5 gap-3 justify-items-center">${stampsButtons.join(
+            <div class="grid grid-cols-5 gap-2 sm:gap-3 justify-items-center">${stampsButtons.join(
               ""
             )}</div>
             ${winnerBlock}
-            <div class="mt-4 grid grid-cols-4 gap-2">
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button onclick="window.toggleUserStatus('${
                 cartela.id
               }')" class="btn ${cartela.active ? "btn-amber" : "btn-green"}">
@@ -733,10 +802,10 @@
         activeCodesList.innerHTML = codes
           .map(
             (code) => `
-          <div class="flex items-center justify-between p-3 bg-white rounded-lg border ${
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-white rounded-lg border ${
             code.active ? "border-green-200" : "border-red-200"
           }">
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
               <span class="font-mono font-bold text-lg ${
                 code.active ? "text-green-700" : "text-red-500"
               }">${code.id}</span>
@@ -749,12 +818,14 @@
                 ${code.active ? "Ativo" : "Inativo"}
               </span>
             </div>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
               <button onclick="window.toggleCodeStatus('${
                 code.id
               }')" class="text-xs px-3 py-1 rounded ${
               code.active ? "btn-amber" : "btn-green"
-            }">${code.active ? "Desativar" : "Ativar"}</button>
+            }">
+                ${code.active ? "Desativar" : "Ativar"}
+              </button>
               <button onclick="window.editCode('${
                 code.id
               }')" class="text-xs px-3 py-1 rounded btn btn-prim">Editar</button>
@@ -762,8 +833,7 @@
                 code.id
               }')" class="text-xs px-3 py-1 rounded btn btn-red">Excluir</button>
             </div>
-          </div>
-        `
+          </div>`
           )
           .join("");
       }
@@ -815,8 +885,7 @@
                   : `<button onclick="window.openDeliver('${w.id}','${w.cartelaId}')" class="px-3 py-1 rounded btn btn-green text-xs">Entregar prêmio</button>`
               }
             </td>
-          </tr>
-        `
+          </tr>`
           )
           .join("");
       }
