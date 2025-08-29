@@ -14,11 +14,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
+        font-weight: 700;
+        cursor: default;
         background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        transition: 0.2s;
         box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
       }
       .stamp-circle.stamped {
@@ -27,22 +26,12 @@
         color: #fff;
         box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
       }
-      .stamp-circle:hover {
-        transform: scale(1.15);
-        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
-      }
       .cartela {
         background: linear-gradient(135deg, #fff 0%, #f8fafc 50%, #e2e8f0 100%);
         border: 3px solid #3b82f6;
         border-radius: 20px;
         box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15),
           0 5px 15px rgba(0, 0, 0, 0.08);
-        transition: 0.3s;
-      }
-      .cartela:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2),
-          0 10px 20px rgba(0, 0, 0, 0.1);
       }
     </style>
   </head>
@@ -59,20 +48,18 @@
         >
           💳 Sistema de Cartão Fidelidade ✨
         </h1>
-        <div class="flex gap-4 items-center">
-          <a
-            href="index.html"
-            class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >🏠 Início</a
-          >
-        </div>
+        <a
+          href="index.html"
+          class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg"
+          >🏠 Início</a
+        >
       </div>
     </header>
 
-    <!-- Login Cliente -->
+    <!-- Login Cliente (local) -->
     <div
       id="userLoginModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     >
       <div class="bg-white p-8 rounded-xl shadow-2xl w-96">
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
@@ -81,23 +68,22 @@
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Usuário:</label
+              >Usuário</label
             >
             <input
-              type="text"
               id="userLoginUser"
-              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              class="w-full p-3 border border-gray-300 rounded-lg"
               placeholder="cliente"
             />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Senha:</label
+              >Senha</label
             >
             <input
-              type="password"
               id="userLoginPass"
-              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              type="password"
+              class="w-full p-3 border border-gray-300 rounded-lg"
               placeholder="123456"
             />
           </div>
@@ -114,16 +100,16 @@
               >Cancelar</a
             >
           </div>
-        </div>
-        <div class="mt-4 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
-          <strong>Cliente Demo:</strong> usuário: <code>cliente</code> | senha:
-          <code>123456</code>
+          <p class="mt-3 text-xs text-gray-500 text-center">
+            Demo: cliente / 123456
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- View -->
+    <!-- VIEW -->
     <div id="viewMode" class="container mx-auto p-6 hidden">
+      <!-- Destaque -->
       <div
         class="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-8 mb-8 text-white shadow-2xl"
       >
@@ -156,6 +142,16 @@
         </div>
       </div>
 
+      <!-- Aviso de rodada travada -->
+      <div
+        id="lockBanner"
+        class="hidden mb-6 p-4 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 text-center font-medium"
+      >
+        ⚠ Há um ganhador pendente. Nova pontuação será liberada após a entrega
+        do prêmio.
+      </div>
+
+      <!-- Regras -->
       <div
         class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-100 border-2 border-orange-400 rounded-2xl p-6 mb-8 shadow-lg"
       >
@@ -184,12 +180,14 @@
               >
             </div>
             <div class="text-base text-gray-700 mt-3">
-              ✨ Uma nova rodada começará automaticamente!
+              ✨ Uma nova rodada começará automaticamente após a entrega do
+              prêmio.
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Busca -->
       <div
         class="bg-white rounded-2xl p-6 mb-8 shadow-lg border-2 border-blue-200"
       >
@@ -199,15 +197,14 @@
         <div class="flex flex-col md:flex-row gap-4">
           <div class="flex-1">
             <input
-              type="text"
               id="searchInput"
               placeholder="Digite o nome ou telefone do cliente..."
               class="w-full p-4 border-2 border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-              oninput="filterCartelas()"
+              oninput="window.filterCartelas()"
             />
           </div>
           <button
-            onclick="clearSearch()"
+            onclick="window.clearSearch()"
             class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl font-semibold"
           >
             🗑 Limpar
@@ -236,13 +233,13 @@
         collection,
         doc,
         getDoc,
-        getDocs,
         onSnapshot,
-        updateDoc,
-        writeBatch,
-        setDoc,
         serverTimestamp,
-        addDoc,
+        query,
+        where,
+        limit,
+        runTransaction,
+        setDoc,
       } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -257,259 +254,261 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
+      /* ===== Estado ===== */
       let allCartelas = [];
-      let allCodes = [];
+      let roundLocked = false;
 
+      /* ===== Login local ===== */
       const userLoginModal = document.getElementById("userLoginModal");
       const viewMode = document.getElementById("viewMode");
-      const cartelasGrid = document.getElementById("cartelasGrid");
+      document.getElementById("userLoginBtn2").addEventListener("click", () => {
+        const u = document.getElementById("userLoginUser").value.trim();
+        const p = document.getElementById("userLoginPass").value.trim();
+        if (u === "cliente" && p === "123456") {
+          userLoginModal.classList.add("hidden");
+          viewMode.classList.remove("hidden");
+        } else alert("❌ Credenciais inválidas. Use: cliente / 123456");
+      });
 
+      /* ===== Refs / Utils ===== */
+      const cartelasGrid = document.getElementById("cartelasGrid");
       const cartelasColRef = collection(db, "cartelas");
       const codesColRef = collection(db, "codes");
       const winnersColRef = collection(db, "winners");
+      const lockBanner = document.getElementById("lockBanner");
 
-      /* Login Cliente (fixo) */
-      function handleUserLogin() {
-        const user = document.getElementById("userLoginUser").value.trim();
-        const pass = document.getElementById("userLoginPass").value.trim();
-        if (user === "cliente" && pass === "123456") {
-          userLoginModal.classList.add("hidden");
-          viewMode.classList.remove("hidden");
-        } else {
-          alert(
-            "❌ Credenciais inválidas. Use usuário: cliente | senha: 123456"
-          );
-        }
-      }
-      document
-        .getElementById("userLoginBtn2")
-        .addEventListener("click", handleUserLogin);
-
-      /* Utils */
-      const hidePhone = (p) => p.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-*");
+      const hidePhone = (p = "") =>
+        (p || "").replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-****");
       const pw = (stamped, stamps) =>
         Math.round(((stamped?.length || 0) / stamps) * 100);
-      const nextEmptyStamp = (stamped, stamps) => {
-        for (let i = 1; i <= stamps; i++)
-          if (!(stamped || []).includes(i)) return i;
-        return null;
-      };
       const fmtDate = (ts) =>
-        ts?.toDate ? ts.toDate().toLocaleString("pt-BR") : "";
+        ts?.toDate
+          ? ts.toDate().toLocaleString("pt-BR")
+          : ts instanceof Date
+          ? ts.toLocaleString("pt-BR")
+          : "";
+      function nextEmptyStamp(stamped = [], stamps = 10) {
+        const set = new Set(stamped);
+        for (let i = 1; i <= stamps; i++) if (!set.has(i)) return i;
+        return null;
+      }
 
-      /* Render */
-      function createCartelaHTML(cartela) {
-        const stampsButtons = [];
-        for (let i = 1; i <= cartela.stamps; i++) {
-          const stamped = (cartela.stamped || []).includes(i);
-          stampsButtons.push(
+      /* ===== Render ===== */
+      function createCartelaHTML(c) {
+        const progress = pw(c.stamped, c.stamps);
+        const waitingDelivery = !!(c.winner && c.winner.delivered === false);
+        const stamps = [];
+        for (let i = 1; i <= c.stamps; i++) {
+          const stamped = (c.stamped || []).includes(i);
+          stamps.push(
             `<div class="stamp-circle ${stamped ? "stamped" : ""}">${
               stamped ? "✓" : i
             }</div>`
           );
         }
-        const progress = pw(cartela.stamped, cartela.stamps);
-        const winnerBlock =
-          cartela.winner && cartela.winner.delivered === false
-            ? `
-          <div class="mt-4 p-4 bg-gradient-to-r from-green-100 to-yellow-100 border-2 border-green-400 rounded-lg text-center">
-            <div class="text-green-800 font-bold text-lg mb-1">🎉 CARTÃO GANHADOR! 🎉</div>
-            <div class="text-orange-700 font-medium">Ganhou em: ${fmtDate(
-              cartela.winner.at
-            )}</div>
-            <div class="text-sm text-gray-600 mt-1">Aguardando entrega do prêmio.</div>
-          </div>`
-            : "";
+        const inputDisabled =
+          roundLocked || !c.active || (c.stamped?.length || 0) >= c.stamps;
 
         return `
-          <div class="cartela p-6 ${
-            !cartela.active ? "opacity-60 border-red-300" : ""
-          }">
-            <div class="text-center mb-4">
-              <div class="flex items-center justify-center gap-2 mb-1">
-                <div class="text-xl font-bold text-gray-800">👤 ${
-                  cartela.name
-                }</div>
-                ${
-                  !cartela.active
-                    ? `<span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">Inativo</span>`
-                    : ""
-                }
-              </div>
-              <div class="text-lg font-semibold text-blue-600 mb-2">📞 ${hidePhone(
-                cartela.phone
-              )}</div>
-              <div class="text-sm text-gray-600">Pontos: ${
-                (cartela.stamped || []).length
-              }/${cartela.stamps} (${progress}%)</div>
-              <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width:${progress}%"></div></div>
+      <div class="cartela p-6 ${!c.active ? "opacity-60 border-red-300" : ""}">
+        <div class="text-center mb-4">
+          <div class="text-xl font-bold text-gray-800">👤 ${c.name}</div>
+          <div class="text-blue-600 font-semibold">📞 ${hidePhone(
+            c.phone
+          )}</div>
+          <div class="text-sm text-gray-600 mt-1">Pontos: ${
+            (c.stamped || []).length
+          }/${c.stamps} (${progress}%)</div>
+          <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width:${progress}%"></div></div>
+        </div>
+
+        <div class="grid grid-cols-5 gap-3 justify-items-center mb-4">${stamps.join(
+          ""
+        )}</div>
+
+        ${
+          waitingDelivery
+            ? `
+          <div class="p-3 rounded bg-emerald-50 border border-emerald-200 text-center">
+            🎉 <b>CARTÃO GANHADOR!</b> Ganhou em: ${fmtDate(c.winner.at)}<br/>
+            <span class="text-emerald-700 text-sm">Aguardando entrega do prêmio.</span>
+          </div>`
+            : ""
+        }
+
+        ${
+          !inputDisabled
+            ? `
+          <div class="p-3 bg-blue-50 border border-blue-200 rounded">
+            <div class="text-blue-700 font-medium text-center mb-2">Insira seu código (vale 1 ponto)</div>
+            <div class="flex gap-2">
+              <input id="code-${c.id}" placeholder="Código" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500">
+              <button onclick="window.submitCode('${c.id}')" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white">Validar</button>
             </div>
-
-            <div class="grid grid-cols-5 gap-3 justify-items-center">${stampsButtons.join(
-              ""
-            )}</div>
-
-            ${winnerBlock}
-
+          </div>`
+            : `
+          <div class="p-3 bg-gray-50 border border-gray-200 rounded text-center text-gray-600 text-sm">
             ${
-              !cartela.active
-                ? `
-              <div class="mt-4 p-4 bg-red-100 border-2 border-red-400 rounded-lg text-center">
-                <div class="text-red-800 font-bold text-lg mb-2">⚠ CARTÃO INATIVO ⚠</div>
-                <div class="text-red-600 font-semibold">Este cartão está temporariamente desabilitado</div>
-              </div>`
-                : (cartela.stamped || []).length === cartela.stamps
-                ? `
-              <div class="mt-4 p-4 bg-gradient-to-r from-green-100 to-yellow-100 border-2 border-green-400 rounded-lg text-center">
-                <div class="text-green-800 font-bold text-lg mb-2">🎉 CARTÃO COMPLETO! 🎉</div>
-                <div class="text-orange-600 font-semibold">🍔 PRÊMIO: R$ 50 iFood Voucher</div>
-              </div>`
-                : `
-              <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div class="text-blue-700 font-medium text-center mb-3">🔢 Insira o código para acumular pontos</div>
-                <div class="flex gap-2">
-                  <input type="text" id="code-${cartela.id}" placeholder="Digite o código" class="flex-1 p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
-                  <button onclick="window.submitCode('${cartela.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Validar</button>
-                </div>
-              </div>`
+              roundLocked
+                ? "⏳ Ganhador pendente — nova rodada em breve."
+                : !c.active
+                ? "Cartão inativo."
+                : "Cartão completo!"
             }
-          </div>`;
+          </div>`
+        }
+      </div>`;
       }
 
-      function renderCartelas(cartelas) {
+      function renderCartelas(list) {
         const term = (document.getElementById("searchInput")?.value || "")
           .toLowerCase()
           .trim();
-        const searchResults = document.getElementById("searchResults");
-        const active = cartelas.filter((c) => c.active);
+        const active = list.filter((c) => c.active);
         const src = term
           ? active.filter(
               (c) =>
                 c.name.toLowerCase().includes(term) || c.phone.includes(term)
             )
           : active;
-        cartelasGrid.innerHTML = src.map((c) => createCartelaHTML(c)).join("");
-        if (!term) searchResults?.classList.add("hidden");
+        cartelasGrid.innerHTML = src.map(createCartelaHTML).join("");
+        const sr = document.getElementById("searchResults");
+        if (!term) sr.classList.add("hidden");
         else {
-          searchResults?.classList.remove("hidden");
-          searchResults.innerHTML = src.length
-            ? `<p class="text-green-600 font-semibold">${src.length} cartão(s) encontrado(s)</p>`
-            : `<p class="text-red-600 font-semibold">Nenhum cartão encontrado para "${term}"</p>`;
+          sr.classList.remove("hidden");
+          sr.textContent = src.length
+            ? `${src.length} cartão(ões) encontrados`
+            : `Nenhum cartão para "${term}"`;
         }
       }
 
-      /* Listeners */
+      /* ===== Snapshots ===== */
       onSnapshot(cartelasColRef, (snap) => {
         allCartelas = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         renderCartelas(allCartelas);
       });
-      onSnapshot(codesColRef, (snap) => {
-        allCodes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      });
+      // trava global: winner pendente
+      onSnapshot(
+        query(winnersColRef, where("delivered", "==", false), limit(1)),
+        (snap) => {
+          roundLocked = !snap.empty;
+          lockBanner.classList.toggle("hidden", !roundLocked);
+          renderCartelas(allCartelas);
+        }
+      );
 
-      /* Pontos / Código */
+      /* ===== Validar código (TRANSACIONAL) ===== */
       async function submitCode(cartelaId) {
+        if (roundLocked) {
+          return alert("⏳ Há um ganhador pendente. Aguarde a próxima rodada.");
+        }
         const input = document.getElementById(`code-${cartelaId}`);
         const code = (input?.value || "").trim().toUpperCase();
-        if (!code) return alert("❌ Digite um código!");
-        const cartela = allCartelas.find((c) => c.id === cartelaId);
-        if (!cartela) return;
+        if (!code) return alert("❌ Digite um código.");
 
-        if (!cartela.active) {
-          input.value = "";
-          return alert("❌ Este cartão está inativo!");
-        }
-        if ((cartela.stamped?.length || 0) >= cartela.stamps) {
-          input.value = "";
-          return alert("⚠ Cartão já está completo!");
-        }
+        try {
+          let completedNow = false,
+            customerName = "";
 
-        const codeRef = doc(db, "codes", code);
-        const codeSnap = await getDoc(codeRef);
-        if (!codeSnap.exists() || !codeSnap.data().active) {
-          input.value = "";
-          return alert("❌ Código inválido ou inativo!");
-        }
+          await runTransaction(db, async (tx) => {
+            const cartRef = doc(db, "cartelas", cartelaId);
+            const cartSnap = await tx.get(cartRef);
+            if (!cartSnap.exists()) throw new Error("cartela_nao_encontrada");
+            const cart = cartSnap.data();
+            customerName = cart.name;
 
-        const usedRef = doc(db, "cartelas", cartelaId, "usedCodes", code);
-        if ((await getDoc(usedRef)).exists()) {
-          input.value = "";
-          return alert("❌ Este código já foi usado neste cartão!");
-        }
+            if (!cart.active) throw new Error("cartela_inativa");
+            const current = cart.stamped || [];
+            if (current.length >= cart.stamps)
+              throw new Error("cartela_completa");
 
-        const next = nextEmptyStamp(cartela.stamped, cartela.stamps);
-        if (!next) {
-          input.value = "";
-          return alert("⚠ Não há pontos disponíveis.");
-        }
+            const codeRef = doc(db, "codes", code);
+            const codeSnap = await tx.get(codeRef);
+            if (!codeSnap.exists() || !codeSnap.data().active)
+              throw new Error("codigo_invalido");
 
-        await updateDoc(doc(db, "cartelas", cartelaId), {
-          stamped: [...(cartela.stamped || []), next].sort((a, b) => a - b),
-        });
-        await setDoc(usedRef, { usedAt: serverTimestamp() });
-        input.value = "";
+            const usedRef = doc(db, "cartelas", cartelaId, "usedCodes", code);
+            const usedSnap = await tx.get(usedRef);
+            if (usedSnap.exists())
+              throw new Error("codigo_ja_usado_neste_cartao");
 
-        const updated = (cartela.stamped?.length || 0) + 1;
-        if (updated === cartela.stamps) {
-          // registra ganhador, marca flag e inicia nova rodada
-          const wRef = await addDoc(winnersColRef, {
-            name: cartela.name,
-            phone: cartela.phone,
-            cartelaId: cartela.id,
-            createdAt: serverTimestamp(),
-            delivered: false,
+            const next = nextEmptyStamp(current, cart.stamps);
+            if (!next) throw new Error("sem_espaco");
+
+            const newStamped = [...current, next].sort((a, b) => a - b);
+            tx.update(cartRef, { stamped: newStamped });
+            tx.set(usedRef, { usedAt: serverTimestamp() });
+
+            if (newStamped.length === cart.stamps && !cart.winner) {
+              completedNow = true;
+              const wRef = doc(collection(db, "winners"));
+              tx.set(wRef, {
+                name: cart.name,
+                phone: cart.phone,
+                cartelaId,
+                createdAt: serverTimestamp(),
+                delivered: false,
+              });
+              tx.update(cartRef, {
+                winner: {
+                  at: serverTimestamp(),
+                  delivered: false,
+                  winnerDocId: wRef.id,
+                },
+              });
+            }
           });
-          await updateDoc(doc(db, "cartelas", cartelaId), {
-            winner: {
-              at: serverTimestamp(),
-              delivered: false,
-              winnerDocId: wRef.id,
-            },
-          });
 
-          await resetAllCardsAndUsedCodes();
+          input.value = "";
           alert(
-            `🎉 PARABÉNS ${cartela.name}! Você completou 10 pontos! Nova rodada iniciada.`
+            completedNow
+              ? `🎉 PARABÉNS ${customerName}! Cartão completo. Aguarde a entrega do prêmio.`
+              : "✅ Código válido! 1 ponto adicionado."
           );
-        } else {
-          alert("✅ Código válido! 1 ponto adicionado!");
+        } catch (err) {
+          console.error(err);
+          const map = {
+            cartela_inativa: "Este cartão está inativo.",
+            cartela_completa: "Cartão já está completo.",
+            codigo_invalido: "Código inválido ou inativo.",
+            codigo_ja_usado_neste_cartao:
+              "Este código já foi usado neste cartão.",
+            sem_espaco: "Não há pontos disponíveis.",
+            cartela_nao_encontrada: "Cartela não encontrada.",
+            "permission-denied":
+              "Regras do Firestore bloquearam. Publique as regras fornecidas.",
+          };
+          alert(
+            `❌ ${map[err.message] || map[err.code] || err.code || err.message}`
+          );
         }
       }
 
-      async function resetAllCardsAndUsedCodes() {
-        const batchSize = 400;
-        for (let i = 0; i < allCartelas.length; i += batchSize) {
-          const slice = allCartelas.slice(i, i + batchSize);
-          const batch = writeBatch(db);
-          slice.forEach((c) =>
-            batch.update(doc(db, "cartelas", c.id), { stamped: [] })
-          );
-          await batch.commit();
-        }
-        for (const c of allCartelas) {
-          const usedRef = collection(db, "cartelas", c.id, "usedCodes");
-          const usedSnap = await getDocs(usedRef);
-          const batch = writeBatch(db);
-          usedSnap.forEach((d) =>
-            batch.delete(doc(db, "cartelas", c.id, "usedCodes", d.id))
-          );
-          await batch.commit();
-        }
-      }
-
-      /* Busca */
+      /* ===== Busca ===== */
       function filterCartelas() {
         renderCartelas(allCartelas);
       }
       function clearSearch() {
         document.getElementById("searchInput").value = "";
-        renderCartelas(allCartelas);
         document.getElementById("searchResults").classList.add("hidden");
+        renderCartelas(allCartelas);
       }
 
+      /* Expose */
       window.submitCode = submitCode;
       window.filterCartelas = filterCartelas;
       window.clearSearch = clearSearch;
     </script>
   </body>
+  <!-- Footer -->
+  <footer class="bg-white border-t mt-10">
+    <div
+      class="container mx-auto px-6 py-5 flex items-center justify-between text-sm text-gray-600"
+    >
+      <span>© <span id="yearNow"></span> — Todos os direitos reservados.</span>
+      <button id="openPrivacy" class="text-blue-600 hover:underline">
+        Termo de Privacidade
+      </button>
+    </div>
+  </footer>
 </html>
