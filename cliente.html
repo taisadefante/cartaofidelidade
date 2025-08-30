@@ -258,6 +258,37 @@
       ></div>
     </div>
 
+    <!-- Modal Privacidade -->
+    <div
+      id="privacyModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[60]"
+    >
+      <div class="bg-white w-[min(720px,94vw)] p-6 rounded-xl shadow-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">Termo de Privacidade</h3>
+          <button
+            id="closePrivacy"
+            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+          >
+            Fechar
+          </button>
+        </div>
+        <div class="text-sm text-gray-700 space-y-3">
+          <p>
+            Coletamos e usamos apenas os dados necessários para operar o
+            programa de fidelidade.
+          </p>
+          <p>
+            Você pode solicitar correção ou exclusão do seu cartão a qualquer
+            momento.
+          </p>
+          <p>
+            Os dados são armazenados com segurança no Firebase (Google Cloud).
+          </p>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-white border-t mt-10 relative">
       <div
@@ -297,38 +328,6 @@
         </div>
       </div>
     </footer>
-
-    <!-- Modal Privacidade -->
-    <div
-      id="privacyModal"
-      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[80]"
-    >
-      <div class="bg-white w-[min(720px,94vw)] p-6 rounded-xl shadow-2xl">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-semibold">Termo de Privacidade</h3>
-          <button
-            id="closePrivacy"
-            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
-          >
-            Fechar
-          </button>
-        </div>
-        <div class="text-sm text-gray-700 space-y-3">
-          <p>
-            Coletamos e usamos apenas os dados necessários para operar o
-            programa de fidelidade: nome e telefone do cliente, pontos
-            acumulados no cartão, e histórico de ganhadores.
-          </p>
-          <p>
-            Não vendemos nem compartilhamos dados com terceiros. Você pode
-            solicitar correção ou exclusão do seu cartão a qualquer momento.
-          </p>
-          <p>
-            Os dados são armazenados com segurança no Firebase (Google Cloud).
-          </p>
-        </div>
-      </div>
-    </div>
 
     <!-- Firebase / App -->
     <script type="module">
